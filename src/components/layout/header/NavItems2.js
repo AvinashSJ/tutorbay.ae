@@ -11,13 +11,6 @@ const NavItems2 = () => {
 
 const {user, isLoggedIn} = useAuth()
   const navItems = [
-    // {
-    //   id: 1,
-    //   name: "Home",
-    //   path: "/",
-    //   dropdown: <DropdownHome />,
-    //   isRelative: true,
-    // },
     {
       id: 1,
       name: "About",
@@ -25,7 +18,7 @@ const {user, isLoggedIn} = useAuth()
       dropdown: null,
       isRelative: false,
     },
-    ...(isLoggedIn && user.userType === "parent"
+          ...(isLoggedIn && user.userType === "parent"
       ? [
           {
             id: 2,
@@ -38,7 +31,7 @@ const {user, isLoggedIn} = useAuth()
       :isLoggedIn &&  user.userType === "tutor"
       ? [
           {
-            id: 3,
+            id: 2,
             name: "Find Parents",
             path: "/about",
             dropdown: null,
@@ -47,7 +40,7 @@ const {user, isLoggedIn} = useAuth()
         ]
       : [
           {
-            id: 3,
+            id: 2,
             name: "Find Parents",
             path: "/about",
             dropdown: null,
@@ -56,7 +49,7 @@ const {user, isLoggedIn} = useAuth()
         ]),
 
     {
-      id: 4,
+      id: 3,
       name: "Blog",
       path: "/dashboards/instructor-dashboard",
       // dropdown: <DropdownBlog />,
@@ -64,7 +57,7 @@ const {user, isLoggedIn} = useAuth()
       isRelative: true,
     },
     {
-      id: 5,
+      id: 4,
       name: "Pricing",
       path: "/about",
       dropdown: null,
@@ -86,7 +79,7 @@ const {user, isLoggedIn} = useAuth()
     //   isRelative: true,
     // },
     {
-      id: 6,
+      id: 5,
       name: "Contact",
       path: "/contact",
       dropdown: null,

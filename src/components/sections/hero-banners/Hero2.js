@@ -52,22 +52,21 @@ const Hero2 = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-12 md:gap-15 lg:gap-30px">
             {/* banner Left */}
             <div className="lg:col-start-1 lg:col-span-7" data-aos="fade-up">
-              <SectionName>Education</SectionName>
+              <SectionName>Tutorbay</SectionName>
               <HeadingLg>
-                Cloud-based LMS <br className="hidden lg:block" />
-                Trusted by 1000+
+                Learn From Expert Tutors. <br className="hidden lg:block" />
+                Face-To-Face Or Online.
               </HeadingLg>
               <p className="text-size-15 lg:text-base 2xl:text-lg text-contentColor mb-5 2xl:mb-30px dark:text-contentColor-dark">
-                Lorem Ipsum is simply dummy text of the printing
-                <br className="hidden 2xl:block" />
-                typesetting industry. Lorem Ipsum has been
+                We Can Help You Find Matching Local And Online Tutors In Seconds <br className="hidden 2xl:block" />
+                Hire A Tutor Now - For FREE.
               </p>
 
               <div>
                 <form className="flex gap-x-15px items-center flex-wrap gap-y-5">
                   <input
                     type="email"
-                    placeholder="Your email address"
+                    placeholder="Your Email Address"
                     className="basis-[311px] h-14 leading-14 pl-3 border border-contentColor text-blackColor focus:outline-none rounded"
                   />
                   <button

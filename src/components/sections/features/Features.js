@@ -5,15 +5,15 @@ const Features = () => {
   const features = [
     {
       title: "Video Training",
-      desc: "With unlimited courses",
+      desc: "200+ Unlimited Courses",
     },
     {
-      title: "Expert Teaceher",
-      desc: "With unlimited courses",
+      title: "Expert Teacher",
+      desc: "100+ Verified Courses",
     },
     {
       title: "Versatile Course",
-      desc: "With unlimited courses",
+      desc: "100+ Verified Courses",
     },
   ];
   return (

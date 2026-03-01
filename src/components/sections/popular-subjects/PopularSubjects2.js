@@ -9,10 +9,10 @@ const PopularSubjects2 = () => {
   const subjects = [
     {
       id: 1,
-      title: "Business Studies",
-      desc: "  Business is succes",
+      title: "Arabic",
+      desc: "Language & Culture",
       navButton: false,
-      category: "Business",
+      category: "Language",
       svg: (
         <div className="relative w-20 h-[60px]">
           <svg
@@ -78,10 +78,10 @@ const PopularSubjects2 = () => {
     },
     {
       id: 2,
-      title: "Programming Tech",
-      desc: "update your skill",
+      title: "Math",
+      desc: "Sharpen Your Skills",
       navButton: false,
-      category: "Mobile Application",
+      category: "Mathematics",
       svg: (
         <div className="relative w-20 h-[60px]">
           <svg
@@ -149,10 +149,10 @@ const PopularSubjects2 = () => {
     },
     {
       id: 3,
-      title: " Artist & Design",
-      desc: "show creativity",
+      title: "Science",
+      desc: "Update Your Skill",
       navButton: false,
-      category: "Art & Design",
+      category: "Science",
       svg: (
         <div className="relative w-20 h-[60px]">
           <svg
@@ -213,10 +213,10 @@ const PopularSubjects2 = () => {
     },
     {
       id: 4,
-      title: "Machine Learning",
-      desc: "Science is power",
+      title: "English",
+      desc: "Explore & Learn",
       navButton: false,
-      category: "Development",
+      category: "Language",
       svg: (
         <div className="relative w-20 h-[60px]">
           <svg
@@ -280,10 +280,10 @@ const PopularSubjects2 = () => {
     },
     {
       id: 5,
-      title: "Health & Fitness",
-      desc: "health is wealth",
+      title: "Physics",
+      desc: "Master the Art",
       navButton: false,
-      category: "Health & Fitness",
+      category: "Science",
       svg: (
         <div className="relative w-20 h-[60px]">
           <svg
@@ -326,10 +326,10 @@ const PopularSubjects2 = () => {
     },
     {
       id: 6,
-      title: "Health & Fitness",
-      desc: "health is wealth",
+      title: "Chemistry",
+      desc: "Discovery & Play",
       navButton: false,
-      category: "Health & Fitness",
+      category: "Science",
       svg: (
         <div className="relative w-20 h-[60px]">
           <svg
@@ -372,10 +372,10 @@ const PopularSubjects2 = () => {
     },
     {
       id: 7,
-      title: "Marketing Analysis",
-      desc: "Science is power",
+      title: "French",
+      desc: "Show Creativity",
       navButton: false,
-      category: "Marketing",
+      category: "Language",
       svg: (
         <div className="relative w-20 h-[60px]">
           <svg
@@ -441,10 +441,10 @@ const PopularSubjects2 = () => {
     },
     {
       id: 8,
-      title: "Business Studies",
-      desc: "Business is succes",
+      title: "Moral Studies",
+      desc: "Upgrade Career",
       navButton: false,
-      category: "Business",
+      category: "Ethics",
       svg: (
         <div className="relative w-20 h-[60px]">
           <svg
@@ -515,12 +515,12 @@ const PopularSubjects2 = () => {
         {/* Subject Header  */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-30px mb-65px">
           <div className="lg:col-star-1 lg:col-span-4">
-            <SectionName data-aos="fade-up">Course List</SectionName>
+            <SectionName data-aos="fade-up">Subject List</SectionName>
             <h3
               className="text-3xl md:text-size-35 2xl:text-size-38 3xl:text-size-42 leading-10 md:leading-45px 2xl:leading-50px 3xl:leading-2xl font-bold text-blackColor dark:text-blackColor-dark"
               data-aos="fade-up"
             >
-              Populer{" "}
+              Popular{" "}
               <span className="relative after:w-full after:h-[7px] after:bg-secondaryColor after:absolute after:left-0 after:bottom-3 md:after:bottom-4 after:z-[-1]">
                 Subjects
               </span>
@@ -532,8 +532,7 @@ const PopularSubjects2 = () => {
               className="text-sm md:text-base text-contentColor dark:text-contentColor-dark mb-10px 2xl:mb-50px 2xl:pl-50px"
               data-aos="fade-up"
             >
-              Forging relationships between multi to national governments and
-              global NGOs begins.
+              We Can Help You Find Matching Local And Online Tutors In Seconds.
             </p>
           </div>
           <div
@@ -542,7 +541,7 @@ const PopularSubjects2 = () => {
           >
             <div>
               <ButtonPrimary color="secondary" path="/courses" arrow={true}>
-                All Catagories
+                All Categories
               </ButtonPrimary>
             </div>
           </div>
