@@ -7,6 +7,7 @@ import useIsTrue from "@/hooks/useIsTrue";
 import LoginButton from "./LoginButton";
 import { useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
+import WalletButton from "@/components/shared/wallet/WalletButton";
 
 const NavbarRight = () => {
   const isHome4 = useIsTrue("/home-4");
@@ -43,6 +44,11 @@ const NavbarRight = () => {
         ) : (
           <li className="hidden lg:block">
             <LoginButton />
+          </li>
+        )}
+        {isLoggedIn && user?.userType === "tutor" && (
+          <li className="hidden lg:block">
+            <WalletButton />
           </li>
         )}
         {isLoggedIn && (

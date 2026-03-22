@@ -7,16 +7,12 @@ import ActiveContent from "@/components/shared/dashboards/ActiveContent";
 import CompletedContent from "@/components/shared/dashboards/CompletedContent";
 import getAllCourses from "@/libs/getAllCourses";
 import { useGetUserPostsQuery } from "@/redux/services/userSlice";
+import { useUser } from "@/hooks/useUser";
 
 const StudentEnrolledCourses = () => {
   const { currentIdx, handleTabClick } = useTab();
-  const userLogged =
-    typeof window !== "undefined" ? localStorage.getItem("user") : null;
-  const parsedUser = JSON.parse(userLogged);
-  const userId = parsedUser?.userId;
-  console.log(userId, "userId");
+  const { userId } = useUser();
   const { data: userPosts, error, isLoading } = useGetUserPostsQuery(userId);
-  console.log(userPosts, "userPosts");
 
   const courses = getAllCourses();
   // const enrolledCourses = userPosts

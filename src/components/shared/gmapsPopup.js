@@ -14,12 +14,20 @@ const GoogleMapModal = ({ isOpen, onClose, onLocationSelect }) => {
       const newMap = new window.google.maps.Map(mapRef.current, {
         center: initialPosition,
         zoom: 10,
+        styles: [
+          {
+            featureType: "poi",
+            elementType: "labels",
+            stylers: [{ visibility: "off" }],
+          },
+        ],
       });
 
       const marker = new window.google.maps.Marker({
         position: initialPosition,
         map: newMap,
         draggable: true,
+        animation: window.google.maps.Animation.DROP,
       });
 
       markerRef.current = marker;
@@ -75,23 +83,68 @@ const GoogleMapModal = ({ isOpen, onClose, onLocationSelect }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white p-4 rounded shadow-lg w-full max-w-3xl h-[550px] relative">
-        <div className="absolute right-4 top-2">
-          <button onClick={onClose} className="text-xl font-bold">
-            ×
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl h-[600px] relative overflow-hidden">
+        {/* Header */}
+        <div className="bg-primaryColor text-white px-6 py-4 flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Select Location</h2>
+          <button
+            onClick={onClose}
+            className="text-white hover:text-gray-200 transition-colors duration-200 p-2 rounded-full hover:bg-white/10"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
           </button>
         </div>
 
-        <div className="w-full h-[450px] rounded" ref={mapRef} />
+        {/* Map Container */}
+        <div className="w-full h-[450px] rounded-b-lg" ref={mapRef} />
 
-        <div className="text-center mt-4">
-          <button
-            onClick={handleUseCurrentLocation}
-            className="bg-white border border-gray-300 text-gray-800 py-2 px-4 rounded-md shadow-sm hover:bg-gray-100 transition duration-200"
-          >
-            📍 Use My Current Location
-          </button>
+        {/* Footer */}
+        <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
+          <div className="flex justify-between items-center">
+            <p className="text-gray-600 text-sm">
+              Click on the map or drag the marker to select your location
+            </p>
+            <button
+              onClick={handleUseCurrentLocation}
+              className="bg-primaryColor text-white py-2 px-4 rounded-md shadow-sm hover:bg-primaryColor/90 transition duration-200 flex items-center gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+              Use My Current Location
+            </button>
+          </div>
         </div>
       </div>
     </div>

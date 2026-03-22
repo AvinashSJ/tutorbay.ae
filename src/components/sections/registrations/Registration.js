@@ -10,7 +10,7 @@ const Registration = () => {
   return (
     <section className="bg-register bg-cover bg-center bg-no-repeat lg:mb-150px">
       {/* registration overlay  */}
-      <div className="overlay bg-blueDark bg-opacity-90 py-20 lg:pt-[90px] lg:pb-0 relative z-0">
+      <div className="overlay bg-darkblack bg-opacity-90 py-20 lg:pt-[90px] lg:pb-0 relative z-0">
         {/* animate icons  */}
         <div>
           <Image
@@ -47,7 +47,7 @@ const Registration = () => {
                     Account
                   </span>{" "}
                   Get free access to{" "}
-                  <span className="text-yellow1">60000 </span> online course
+                  <span className="text-yellow1">600+ </span> parents requirements
                 </h3>
                 <div className="flex gap-x-5 items-center">
                   <PopupVideo />

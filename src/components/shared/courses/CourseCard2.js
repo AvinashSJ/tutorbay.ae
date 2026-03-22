@@ -3,17 +3,20 @@ import { useWishlistContext } from "@/contexts/WshlistContext";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import placeholder from "@/assets/images/placeholder.png";
+import { useRouter } from "next/navigation";
 let insId = 0;
 const CourseCard2 = ({ course, card, isList, isNotSidebar }) => {
   const { addProductToWishlist } = useWishlistContext();
+  const router = useRouter();
   const {
     id,
     title,
-    lesson,
+    subject,
     duration,
     image,
     price,
-    isFree,
+    firstName,
     insName,
     insImg,
     categories,
@@ -85,6 +88,14 @@ const CourseCard2 = ({ course, card, isList, isNotSidebar }) => {
   )?.bg;
   insId = id;
   insId = insId % 6 ? insId % 6 : 6;
+
+  const handleKnowDetails = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('selectedCourse', JSON.stringify(course));
+    }
+    router.push(`/parent-requirements/${course.id}`);
+  };
+
   return (
     <div className="w-full group grid-item rounded">
       <div className="tab-content-wrapper">
@@ -106,8 +117,10 @@ const CourseCard2 = ({ course, card, isList, isNotSidebar }) => {
               <Image
                 src={image}
                 alt=""
+                width={100}
+                height={100}
                 className="w-full transition-all duration-300 scale-105 group-hover:scale-110 -mb-1"
-                placeholder="blur"
+                // placeholder="blur"
               />
             </Link>
             <div className="absolute left-0 top-1 flex justify-between w-full items-center px-2">
@@ -147,7 +160,7 @@ const CourseCard2 = ({ course, card, isList, isNotSidebar }) => {
                   </div>
                   <div>
                     <span className="text-sm text-black dark:text-blackColor-dark">
-                      {lesson}
+                      {subject}
                     </span>
                   </div>
                 </div>
@@ -175,18 +188,21 @@ const CourseCard2 = ({ course, card, isList, isNotSidebar }) => {
                 </Link>
               </h4>
               {/*  price */}
+              {console.log(price, "price")}
               <div className="text-lg font-medium text-black-brerry-light mb-4">
-                ${price.toFixed(2)}
-                <del className="text-sm text-lightGrey4 font-semibold">
+                <p>
+                  Price: {Number.isFinite(price) ? `${price.toFixed(2)} AED` : price} 
+                </p>
+                {/* <del className="text-sm text-lightGrey4 font-semibold">
                   / $67.00
-                </del>
-                <span
+                </del> */}
+                {/* <span
                   className={`ml-6 text-base font-semibold ${
                     isFree ? " text-greencolor" : " text-secondaryColor3"
                   }`}
                 >
                   {isFree ? "Free" : <del>Free</del>}
-                </span>
+                </span> */}
               </div>
               {/*  bottom */}
               <div className="flex flex-wrap justify-between sm:flex-nowrap items-center gap-y-2 pt-15px border-t border-borderColor">
@@ -199,10 +215,10 @@ const CourseCard2 = ({ course, card, isList, isNotSidebar }) => {
                     >
                       <Image
                         className="w-[30px] h-[30px] rounded-full mr-15px"
-                        src={insImg}
+                        src={placeholder}
                         alt=""
                       />
-                      <span className="flex">{insName}</span>
+                      <span className="flex">{firstName}</span>
                     </Link>
                   </div>
                   <div className="text-start md:text-end ml-35px">
@@ -215,14 +231,14 @@ const CourseCard2 = ({ course, card, isList, isNotSidebar }) => {
                   </div>
                 </div>
 
-                <div>
-                  <Link
-                    className="text-sm lg:text-base text-blackColor hover:text-primaryColor dark:text-blackColor-dark dark:hover:text-primaryColor"
-                    href={`/courses/${id}`}
+                <div className=" flex justify-end">
+                  <button
+                    className="text-sm lg:text-base text-blackColor hover:text-primaryColor dark:text-blackColor-dark dark:hover:text-primaryColor flex items-center"
+                    onClick={handleKnowDetails}
                   >
                     Know Details
-                    <i className="icofont-arrow-right"></i>
-                  </Link>
+                    <i className="icofont-arrow-right ml-2"></i>
+                  </button>
                 </div>
               </div>
             </div>

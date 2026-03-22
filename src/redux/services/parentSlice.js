@@ -1,18 +1,10 @@
 // redux/services/userSlice.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { baseQueryWithAuth } from "./baseQueryWithAuth";
 
 export const parentSlice = createApi({
   reducerPath: "parentApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "https://tutorbay-api.onrender.com/api",
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        headers.set("authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithAuth,
   endpoints: (builder) => ({
     createRequirement: builder.mutation({
       query: (payload) => ({

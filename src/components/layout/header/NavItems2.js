@@ -13,17 +13,24 @@ const {user, isLoggedIn} = useAuth()
   const navItems = [
     {
       id: 1,
-      name: "About",
+      name: "Home",
+      path: "/home-2",
+      // dropdown: <DropdownHome />,
+      isRelative: true,
+    },
+    {
+      id: 1,
+      name: "About us",
       path: "/about",
       dropdown: null,
       isRelative: false,
     },
-          ...(isLoggedIn && user.userType === "parent"
+    ...(isLoggedIn && user.userType === "parent"
       ? [
           {
             id: 2,
             name: "Find Tutor",
-            path: "/about",
+            path: "/find-tutors",
             dropdown: null,
             isRelative: false,
           },
@@ -31,56 +38,56 @@ const {user, isLoggedIn} = useAuth()
       :isLoggedIn &&  user.userType === "tutor"
       ? [
           {
-            id: 2,
-            name: "Find Parents",
-            path: "/about",
+            id: 3,
+            name: "Find Requirements",
+            path: "/find-requirements",
             dropdown: null,
             isRelative: false,
           },
         ]
       : [
           {
-            id: 2,
-            name: "Find Parents",
-            path: "/about",
+            id: 3,
+            name: "Find Requirements",
+            path: "/find-requirements",
             dropdown: null,
             isRelative: false,
           },
         ]),
 
+        // {
+        //   id: 5,
+        //   name: "Pricing",
+        //   path: "/about",
+        //   dropdown: null,
+        //   isRelative: false,
+        // },
+        // {
+        //   id: 4,
+        //   name: "Courses",
+        //   path: "/courses",
+        //   dropdown: <DropdownCourses2 />,
+        //   isRelative: true,
+        // },
+        {
+          id: 4,
+          name: "Blogs",
+          path: "/dashboards/instructor-dashboard",
+          // dropdown: <DropdownBlog />,
+          dropdown: null,
+          isRelative: true,
+        },
+
     {
-      id: 3,
-      name: "Blog",
-      path: "/dashboards/instructor-dashboard",
-      // dropdown: <DropdownBlog />,
-      dropdown: null,
+      id: 5,
+      name: "How it works",
+      path: "/about",
+      // dropdown: <DropdownPages2 />,
       isRelative: true,
     },
     {
-      id: 4,
-      name: "Pricing",
-      path: "/about",
-      dropdown: null,
-      isRelative: false,
-    },
-    // {
-    //   id: 4,
-    //   name: "Courses",
-    //   path: "/courses",
-    //   dropdown: <DropdownCourses2 />,
-    //   isRelative: true,
-    // },
-
-    // {
-    //   id: 5,
-    //   name: "Pages",
-    //   path: "/about",
-    //   dropdown: <DropdownPages2 />,
-    //   isRelative: true,
-    // },
-    {
-      id: 5,
-      name: "Contact",
+      id: 6,
+      name: "Contact us",
       path: "/contact",
       dropdown: null,
       isRelative: false,

@@ -1,176 +1,56 @@
-import Image from "next/image";
-import shapeImage2 from "@/assets/images/education/hero_shape2.png";
-import shapeImage3 from "@/assets/images/education/hero_shape3.png";
-import shapeImage4 from "@/assets/images/education/hero_shape4.png";
-import shapeImage5 from "@/assets/images/education/hero_shape5.png";
-import educationImage from "@/assets/images/education/education.png";
-import educationImage1 from "@/assets/images/education/education__1.png";
-import educationImage2 from "@/assets/images/education/education__2.png";
-import educationImage3 from "@/assets/images/education/education__3.png";
-import educationImage4 from "@/assets/images/education/education__4.png";
-import educationImage5 from "@/assets/images/education/education__5.png";
-import educationImage6 from "@/assets/images/education/education__6.png";
-import educationImage7 from "@/assets/images/education/education__7.png";
-import aboutImage16 from "@/assets/images/about/about_16.png";
-import TiltWrapper from "@/components/shared/wrappers/TiltWrapper";
-const {
-  default: HeadingLg,
-} = require("@/components/shared/headings/HeadingLg");
-const {
-  default: SectionName,
-} = require("@/components/shared/section-names/SectionName");
-const { default: Link } = require("next/link");
+import React from "react";
 
 const Hero2 = () => {
   return (
-    <section data-aos="fade-up">
-      <div className="overflow-hidden relative z-0">
-        {/* animated icons */}
-        <div>
-          <Image
-            src={shapeImage2}
-            className="absolute right-[16%] top-[60%] md:right-[31px] md:top-[70%] lg:right-[16%] lg:top-[60%] animate-move-var z-10"
-            alt=""
-          />
-          <Image
-            src={shapeImage3}
-            className="absolute right-[9%] top-[58%] md:right-[12%] lg:right-[9%] animate-move-hor z-10"
-            alt=""
-          />
-          <Image
-            src={shapeImage4}
-            className="absolute left-1/2 bottom-[15%] md:left-[4%] lg:left-1/2 animate-spin-slow"
-            alt=""
-          />
-          <Image
-            src={shapeImage5}
-            className="absolute left-[53%] top-[41%] md:left-[9%] md:top-[43%] lg:left-[53%] animate-spin-slow"
-            alt=""
-          />
-        </div>
-        <div className="container pt-12 lg:pt-130px pb-175px relative">
-          <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-12 md:gap-15 lg:gap-30px">
-            {/* banner Left */}
-            <div className="lg:col-start-1 lg:col-span-7" data-aos="fade-up">
-              <SectionName>Tutorbay</SectionName>
-              <HeadingLg>
-                Learn From Expert Tutors. <br className="hidden lg:block" />
-                Face-To-Face Or Online.
-              </HeadingLg>
-              <p className="text-size-15 lg:text-base 2xl:text-lg text-contentColor mb-5 2xl:mb-30px dark:text-contentColor-dark">
-                We Can Help You Find Matching Local And Online Tutors In Seconds <br className="hidden 2xl:block" />
-                Hire A Tutor Now - For FREE.
-              </p>
-
-              <div>
-                <form className="flex gap-x-15px items-center flex-wrap gap-y-5">
-                  <input
-                    type="email"
-                    placeholder="Your Email Address"
-                    className="basis-[311px] h-14 leading-14 pl-3 border border-contentColor text-blackColor focus:outline-none rounded"
-                  />
-                  <button
-                    type="submit"
-                    className="text-size-15 text-whiteColor bg-primaryColor px-39px py-14px border border-primaryColor hover:text-primaryColor hover:bg-whiteColor inline-block rounded group dark:hover:text-whiteColor dark:hover:bg-whiteColor-dark"
-                  >
-                    Sign Up
-                  </button>
-                </form>
+    <section className="relative overflow-hidden bg-white py-20 lg:py-32">
+      {/* Background Graphics */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute right-0 top-1/4 w-96 h-96 bg-purple-100 rounded-full opacity-30"></div>
+        <div className="absolute left-1/4 bottom-1/4 w-32 h-32 bg-blue-200 rounded-full opacity-40"></div>
+        <div className="absolute right-1/4 top-1/2 w-24 h-24 bg-purple-200 opacity-30"></div>
+        <div className="absolute left-1/2 top-1/3 w-16 h-16 bg-blue-100 opacity-50"></div>
+      </div>
+      
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Left Content */}
+          <div className="text-center lg:text-left">
+            <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              Learn From Expert Tutors.
+              <br />
+              <span className="text-blue-600">Face-To-Face Or Online.</span>
+            </h1>
+            <p className="text-lg lg:text-xl text-gray-700 mb-8 max-w-2xl mx-auto lg:mx-0">
+              We Can Help You Find Matching Local And Online Tutors In Seconds. 
+              Hire A Tutor Now - For FREE.
+            </p>
+            
+            {/* Email Signup Form */}
+            <div className="max-w-md mx-auto lg:mx-0">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <input
+                  type="email"
+                  placeholder="Your Email Address"
+                  className="flex-1 px-6 py-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+                />
+                <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-lg transition-colors duration-200 whitespace-nowrap">
+                  Sign Up
+                </button>
               </div>
             </div>
-            {/* banner right */}
-            <div className="lg:col-start-8 lg:col-span-5" data-aos="fade-up">
-              <TiltWrapper>
-                <div className="tilt relative z-0">
-                  {/* bannar image */}
-                  <div className="flex flex-col items-center lg:items-end">
-                    <Image
-                      className="text-center"
-                      src={educationImage}
-                      alt=""
-                      placeholder="blur"
-                    />
-                    <Image
-                      className="absolute left-0 bottom-[-93px] md:left-[30px] lg:left-0"
-                      src={educationImage1}
-                      alt=""
-                      placeholder="blur"
-                    />
-                    <Image
-                      src={educationImage2}
-                      className="absolute left-5 top-10 md:left-[30px] lg:left-5 -z-10"
-                      alt=""
-                      placeholder="blur"
-                    />
-                    <Image
-                      src={educationImage3}
-                      className="absolute -right-4 top-[-22px] md:right-[155px] lg:-right-4 z-[-1] animate-move-hor"
-                      alt=""
-                      placeholder="blur"
-                    />
-                  </div>
-                  <div className="w-300px md:w-342px absolute top-6 rihgt-0 md:top-[41px] md:right-[9px] lg:right-[-26px] 2xl:right-[-166px] bg-whiteColor p-10px flex gap-x-5 items-center animate-move-var shadow-hero-greeting dark:bg-whiteColor-dark">
-                    <div>
-                      <Image
-                        src={aboutImage16}
-                        className="w-55px h-55px rounded block"
-                        alt=""
-                        placeholder="blur"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-size-15 font-semibold text-greencolor3">
-                        Congratulations!!
-                      </p>
-                      <p className="text-sm text-contentColor dark:text-contentColor-dark">
-                        Your Admission Completed
-                      </p>
-                    </div>
-                  </div>
-                  <div className="absolute right-10 bottom-[-136px] md:right-[219px] md:bottom-[-105px] lg:right-[-50px] lg:bottom-[-125px] 2xl:right-10 2xl:bottom-[-105px]">
-                    <Link href="#" className="flex group">
-                      <Image
-                        src={educationImage4}
-                        className="w-52px h-52px"
-                        alt=""
-                        placeholder="blur"
-                      />
-                      <Image
-                        src={educationImage5}
-                        className="w-52px h-52px transition-all duration-300 -ml-35px group-hover:-ml-30px"
-                        alt=""
-                        placeholder="blur"
-                      />
-                      <Image
-                        src={educationImage6}
-                        className="w-52px h-52px transition-all duration-300 -ml-35px group-hover:-ml-30px"
-                        alt=""
-                        placeholder="blur"
-                      />
-                      <Image
-                        src={educationImage7}
-                        className="w-52px h-52px transition-all duration-300 -ml-35px group-hover:-ml-30px"
-                        alt=""
-                        placeholder="blur"
-                      />
-                    </Link>
-                    <div>
-                      <p className="text-sm text-lightGrey3 mb-15px">
-                        Join over
-                        <span className="text-blackColor dark:text-blackColor-dark">
-                          4000+
-                        </span>
-                        students
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </TiltWrapper>
+          </div>
+          
+          {/* Right Content - Abstract Graphics */}
+          <div className="relative">
+            <div className="w-full h-96 bg-gradient-to-br from-purple-100 to-blue-100 rounded-3xl relative overflow-hidden">
+              <div className="absolute top-10 right-10 w-20 h-20 bg-yellow-300 rounded-full opacity-60"></div>
+              <div className="absolute bottom-20 left-10 w-16 h-16 bg-pink-300 rounded-full opacity-60"></div>
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-blue-200 rounded-full opacity-40"></div>
+              <div className="absolute top-1/3 right-1/3 w-12 h-12 bg-purple-300 rounded-full opacity-50"></div>
             </div>
           </div>
         </div>
       </div>
-      {/* bannaer section */}
     </section>
   );
 };

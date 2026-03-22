@@ -1,23 +1,19 @@
 // redux/services/userSlice.js
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQueryWithAuth } from "./baseQueryWithAuth";
 
 export const userSlice = createApi({
   reducerPath: "userApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "https://tutorbay-api.onrender.com/api",
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        headers.set("authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithAuth,
   endpoints: (builder) => ({
     getUser: builder.query({
       query: (userId) => ({
         url: `/users/get-user-details/${userId}`,
         method: "GET",
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
       }),
       transformResponse: (response) => response.data,
     }),
@@ -26,11 +22,76 @@ export const userSlice = createApi({
       query: (userId) => ({
         url: `/requirements/get-single-user-requirements?userId=${userId}`,
         method: "GET",
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
       }),
       transformResponse: (response) => response.data,
+    }),
+
+    // ✅ New API based on the curl command
+    getRequirementsList: builder.query({
+      query: (userType) => ({
+        url: `/requirements/get-parents-tutors-list?userType=${userType}`,
+        method: "GET",
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+      }),
+      transformResponse: (response) => response.data,
+    }),
+
+    updateUserDetails: builder.mutation({
+      query: ({ userId, data }) => ({
+        url: `/users/update-user-details/${userId}`,
+        method: "PATCH",
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: data,
+      }),
+      transformResponse: (response) => response.data,
+    }),
+
+    updateTutorProfile: builder.mutation({
+      query: ({ userId, ...data }) => ({
+        url: `/users/update-user-details/${userId}`,
+        method: "PATCH",
+        body: {
+          ...data,
+          userType: "tutor"
+        },
+      }),
+      invalidatesTags: ["User"],
+    }),
+
+    verifyOTP: builder.mutation({
+      query: (data) => ({
+        url: "/users/verify-otp",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    verifyEmail: builder.mutation({
+      query: (data) => ({
+        url: "/users/verify-email",
+        method: "POST",
+        body: data,
+      }),
     }),
   }),
 });
 
-export const { useGetUserQuery, useGetUserPostsQuery } = userSlice;
-    
+export const { 
+  useGetUserQuery, 
+  useGetUserPostsQuery, 
+  useGetRequirementsListQuery,
+  useUpdateUserDetailsMutation,
+  useUpdateTutorProfileMutation,
+  useVerifyOTPMutation,
+  useVerifyEmailMutation
+} = userSlice;

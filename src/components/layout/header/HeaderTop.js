@@ -26,13 +26,13 @@ const HeaderTop = () => {
       >
         <div className="flex justify-between items-center">
           <div>
-            <p>Call Us: +971 545321756 - Mail Us: support@tutorbay.ae</p>
+            <p>Call Us: +971 50 832 3002 - Mail Us: support@tutorbay.ae</p>
           </div>
           <div className="flex gap-37px items-center">
             <div>
               <p>
                 <i className="icofont-location-pin text-primaryColor text-size-15 mr-5px"></i>
-                <span>Muhaisnah -4 Dubai, UAE</span>
+                <span>University City SRTIP, Sharjah, UAE</span>
               </p>
             </div>
             <div>

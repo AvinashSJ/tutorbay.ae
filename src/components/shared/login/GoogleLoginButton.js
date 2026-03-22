@@ -4,7 +4,7 @@ import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { useLoginWithGoogleMutation } from "@/redux/services/apiSlice";
 // import { useLoginWithGoogleMutation } from "../../redux/services/apiSlice";
 
-const GoogleLoginButton = ({ handleSuccess }) => {
+const GoogleLoginButton = ({ handleSuccess, buttonTitle }) => {
   // const [loginWithGoogle] = useLoginWithGoogleMutation();
   const clientId = process.env.GOOGLE_CLIENT_ID;
 
@@ -19,6 +19,9 @@ const GoogleLoginButton = ({ handleSuccess }) => {
       <GoogleLogin
         onSuccess={handleSuccess}
         onError={() => console.log("Google login failed")}
+        text={buttonTitle === "Sign Up" ? "signup_with" : "signin_with"}
+        size="large"
+        shape="rectangular"
       />
     </GoogleOAuthProvider>
   );

@@ -6,43 +6,77 @@ import AccordionPages from "./AccordionPages";
 import AccordionCourses from "./AccordionCourses";
 import AccordionDashboard from "./AccordionDashboard";
 import AccordionEcommerce from "./AccordionEcommerce";
+import useAuth from "@/hooks/useAuth";
 
 const MobileMenuItems = () => {
+  const { user, isLoggedIn } = useAuth();
+
+  const dynamicItems = isLoggedIn
+    ? user.userType === "parent"
+      ? [{ id: 2, name: "Find Tutor", path: "/find-tutors" }]
+      : [{ id: 3, name: "Find Requirements", path: "/find-requirements" }]
+    : [{ id: 3, name: "Find Requirements", path: "/find-requirements" }];
+
   const items = [
     {
       id: 1,
       name: "Home",
       path: "/",
-      accordion: "accordion",
-      children: <AccordionHome />,
+      // accordion: "accordion",
+      // children: <AccordionHome />,
     },
-    {
-      id: 2,
-      name: "Pages",
-      path: "/about",
-      accordion: "accordion",
-      children: <AccordionPages />,
-    },
-    {
-      id: 3,
-      name: "Courses",
-      path: "/courses",
-      accordion: "accordion",
-      children: <AccordionCourses />,
-    },
+    // {
+    //   id: 2,
+    //   name: "Pages",
+    //   path: "/about",
+    //   accordion: "accordion",
+    //   children: <AccordionPages />,
+    // },
+    ...dynamicItems,
+
+    // {
+    //   id: 3,
+    //   name: "Courses",
+    //   path: "/courses",
+    //   accordion: "accordion",
+    //   children: <AccordionCourses />,
+    // },
+    // {
+    //   id: 4,
+    //   name: "Dashboard",
+    //   path: "/dashboards/instructor-dashboard",
+    //   accordion: "accordion",
+    //   children: <AccordionDashboard />,
+    // },
+    // {
+    //   id: 5,
+    //   name: "Ecommerce",
+    //   path: "/ecommerce/shop",
+    //   accordion: "accordion",
+    //   children: <AccordionEcommerce />,
+    // },
     {
       id: 4,
-      name: "Dashboard",
+      name: "Blogs",
       path: "/dashboards/instructor-dashboard",
-      accordion: "accordion",
-      children: <AccordionDashboard />,
+      // dropdown: <DropdownBlog />,
+      // accordion: null,
+      // isRelative: true,
     },
+
     {
       id: 5,
-      name: "Ecommerce",
-      path: "/ecommerce/shop",
-      accordion: "accordion",
-      children: <AccordionEcommerce />,
+      name: "How it works",
+      path: "/about",
+      // dropdown: <DropdownPages2 />,
+      // isRelative: true,
+    },
+    {
+      id: 6,
+      name: "Contact us",
+      path: "/contact",
+      // dropdown: null,
+      // isRelative: false,
     },
   ];
 

@@ -20,29 +20,26 @@ const Hero1 = () => {
         <div className="container grid grid-cols-1 lg:grid-cols-2 items-center">
           {/* banner Left  */}
           <div data-aos="fade-up">
-            <HreoName>EDUCATION SOLUTION</HreoName>
+            <HreoName>TUTORING PLATFORM</HreoName>
             <HeadingLg color={"white"}>
-              Cloud-based LMS <br className="hidden md:block" />
-              Trusted by 1000+
+              Learn From Expert Tutors. <br className="hidden md:block" />
+              Face-To-Face Or Online.
             </HeadingLg>
             <PagragraphHero color="white">
-              Lorem Ipsum is simply dummy text of the printing typesetting
-              industry. Lorem Ipsum has been
+              We Can Help You Find Matching Local And Online Tutors In Seconds. Hire A Tutor Now - For FREE
             </PagragraphHero>
 
             <div className="mt-30px md:mt-45px">
-              <Link
-                href="/courses"
-                className="text-sm md:text-size-15 font-semibold text-darkdeep2 bg-whiteColor border border-whiteColor px-5 md:px-30px py-3 md:py-4 hover:text-whiteColor hover:bg-darkblack rounded inline-block mr-6px md:mr-30px shadow-hero-action dark:bg-whiteColor-dark dark:hover:bg-whiteColor dark:text-whiteColor dark:hover:text-whiteColor-dark dark:border-none"
-              >
-                View Courses
-              </Link>
-              <Link
-                href="/courses"
-                className="text-sm md:text-size-15 font-semibold text-whiteColor py-3 md:py-4 hover:text-secondaryColor inline-block"
-              >
-                Find out more <i className="icofont-long-arrow-right"></i>
-              </Link>
+              <div className="flex flex-col sm:flex-row gap-4 items-center">
+                <input
+                  type="email"
+                  placeholder="Your Email Address"
+                  className="w-full sm:w-80 px-4 py-3 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-primaryColor"
+                />
+                <button className="w-full sm:w-auto bg-primaryColor text-white px-6 py-3 rounded-lg font-semibold hover:bg-primaryColor/90 transition-colors">
+                  Sign Up
+                </button>
+              </div>
             </div>
           </div>
           {/* banner right  */}

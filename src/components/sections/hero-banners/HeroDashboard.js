@@ -12,7 +12,7 @@ const HeroDashboard = () => {
   const isAdmin = partOfPathNaem === "admin" ? true : false;
   const isInstructor = partOfPathNaem === "instructor" ? true : false;
 
-  const { user } = useAuth;
+  const { user } = useAuth();
   return (
     <section>
       <div className="container-fluid-2">
@@ -114,11 +114,12 @@ const HeroDashboard = () => {
           ) : (
             ""
           )}
+          {console.log(user, "user?.userType")}
           <div>
             <Link
               href={
                 user?.userType === "tutor"
-                  ? `/dashboards/create-course`
+                  ? `/find-requirements`
                   : `/dashboards/create-requirement`
               }
               className={`text-size-15 border text-whiteColor   ${
@@ -130,7 +131,7 @@ const HeroDashboard = () => {
               }  px-25px py-10px hover:bg-whiteColor rounded group text-nowrap flex gap-1 items-center`}
             >
               {isAdmin || isInstructor
-                ? " Create a New Course"
+                ? "Check for requirements"
                 : "Post a New Requirement "}
               <svg
                 xmlns="http://www.w3.org/2000/svg"

@@ -7,17 +7,20 @@ import aboutImage8 from "@/assets/images/about/about_8.png";
 import SectionName from "@/components/shared/section-names/SectionName";
 import AboutListItem from "@/components/shared/abouts/AboutListItem";
 import TiltWrapper from "@/components/shared/wrappers/TiltWrapper";
+
 const About2 = () => {
   const items = [
-    { id: 1, title: "Find perfect match for your criteria" },
-    { id: 2, title: "Learn skills with experts in every field" },
-    { id: 3, title: "Get connected with qualified tutors now" },
+    { id: 1, title: "Find perfect instructor near you." },
+    { id: 2, title: "Learn skills with experts in every field." },
+    { id: 3, title: "Get connected with qualified instructors now." },
+    { id: 4, title: "Join Over 4000+ Students." },
   ];
+  
   return (
-    <section>
-      <div className="container">
+    <section className="py-20 bg-gray-50">
+      <div className="container mx-auto px-4">
         {/* about section  */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-30px pt-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* about left */}
           <div data-aos="fade-up">
             <TiltWrapper>
@@ -39,18 +42,17 @@ const About2 = () => {
           </div>
 
           {/* about right */}
-          <div data-aos="fade-up" className="pl-0 lg:pl-35px">
+          <div data-aos="fade-up" className="pl-0 lg:pl-8">
             <SectionName>About Us</SectionName>
-            <h3 className="text-3xl md:text-size-45 leading-10 md:leading-2xl font-bold text-blackColor dark:text-blackColor-dark pb-25px">
-              Find Qualified Tutors, Institutes And{" "}
-              <span className="relative z-0 after:w-full after:h-[7px] after:bg-secondaryColor after:absolute after:left-0 after:bottom-3 md:after:bottom-5 after:-z-1">
-                Local Classes
-              </span>
+            <h3 className="text-3xl md:text-5xl leading-tight font-bold text-gray-900 pb-6">
+              Find Qualified Tutors, Institutes And Local Classes.
             </h3>
-            <p className="text-sm md:text-base leading-7 text-contentColor dark:text-contentColor-dark mb-6">
-              We Can Help You Find Matching Local And Online Tutors In Seconds.
+            <p className="text-lg text-gray-700 mb-8 leading-relaxed">
+              We connect students with qualified tutors and educational institutions 
+              to provide personalized learning experiences. Our platform makes it 
+              easy to find the perfect match for your educational needs.
             </p>
-            <ul className="space-y-5">
+            <ul className="space-y-4 mb-8">
               {items.map((item, idx) => (
                 <AboutListItem key={idx} item={item} />
               ))}

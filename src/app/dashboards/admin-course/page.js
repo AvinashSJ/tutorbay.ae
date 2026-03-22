@@ -1,14 +1,11 @@
+"use client";
 import AdminCourseMain from "@/components/layout/main/dashboards/AdminCourseMain";
 import DashboardContainer from "@/components/shared/containers/DashboardContainer";
-
 import ThemeController from "@/components/shared/others/ThemeController";
 import DsahboardWrapper from "@/components/shared/wrappers/DsahboardWrapper";
 import PageWrapper from "@/components/shared/wrappers/PageWrapper";
-export const metadata = {
-  title: "Admin Course | Tutorbay - Education Palatform",
-  description: "Admin Course | Tutorbay - Education Palatform",
-};
-const Admin_Course = () => {
+
+const Page = () => {
   return (
     <PageWrapper>
       <main>
@@ -23,4 +20,4 @@ const Admin_Course = () => {
   );
 };
 
-export default Admin_Course;
+export default Page;

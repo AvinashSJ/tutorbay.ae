@@ -1,4 +1,4 @@
-import CoursesPrimary from "@/components/sections/courses/CoursesPrimary";
+import CoursesPrimary from "@/components/sections/courses/TutorList";
 import HeroPrimary from "@/components/sections/hero-banners/HeroPrimary";
 import React from "react";
 

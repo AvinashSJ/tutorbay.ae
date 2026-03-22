@@ -5,21 +5,21 @@ const Features = () => {
   const features = [
     {
       title: "Video Training",
-      desc: "200+ Unlimited Courses",
+      desc: "View Unlimited Courses",
     },
     {
       title: "Expert Teacher",
-      desc: "100+ Verified Courses",
+      desc: "View Unlimited Courses",
     },
     {
       title: "Versatile Course",
-      desc: "100+ Verified Courses",
+      desc: "View Unlimited Courses",
     },
   ];
   return (
-    <div className="container">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-30px">
-        {/* featue single */}
+    <div className="container mx-auto px-4 py-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* feature single */}
         {features.map((feature, idx) => (
           <Feature key={idx} feature={{ ...feature, id: idx }} />
         ))}

@@ -15,7 +15,7 @@ const MobileMenu = () => {
 
       {/*  mobile menu wrapper */}
       <div className="px-5 md:px-30px pt-5 md:pt-10 pb-50px h-full overflow-y-auto">
-        <MobileMenuSearch />
+        {/* <MobileMenuSearch /> */}
         {/*  mobile menu accordions */}
         {isHome2Dart ? <MobileItems2 /> : <MobileMenuItems />}
         {/*  my account accordion */}

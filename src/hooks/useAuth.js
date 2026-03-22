@@ -9,6 +9,7 @@ const useAuth = () => {
     const userData = localStorage.getItem("user");
 
     setIsLoggedIn(!!token);
+    console.log(userData ? JSON.parse(userData) : null, "userData");
 
     try {
       setUser(userData ? JSON.parse(userData) : null);

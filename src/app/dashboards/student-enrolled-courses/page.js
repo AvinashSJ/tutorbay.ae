@@ -1,14 +1,11 @@
-import AdminDashboardMain from "@/components/layout/main/dashboards/AdminDashboardMain";
+"use client";
 import StudentEnrolledCoursesMain from "@/components/layout/main/dashboards/StudentEnrolledCoursesMain";
 import DashboardContainer from "@/components/shared/containers/DashboardContainer";
 import ThemeController from "@/components/shared/others/ThemeController";
 import DsahboardWrapper from "@/components/shared/wrappers/DsahboardWrapper";
 import PageWrapper from "@/components/shared/wrappers/PageWrapper";
-export const metadata = {
-  title: "Student Enrolled Courses | Tutorbay - Education Palatform",
-  description: "Student Enrolled Courses | Tutorbay - Education Palatform",
-};
-const Student_Enrolled_Courses = () => {
+
+const Page = () => {
   return (
     <PageWrapper>
       <main>
@@ -23,4 +20,4 @@ const Student_Enrolled_Courses = () => {
   );
 };
 
-export default Student_Enrolled_Courses;
+export default Page;

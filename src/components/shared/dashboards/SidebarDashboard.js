@@ -2,18 +2,18 @@
 
 import { usePathname } from "next/navigation";
 import ItemsDashboard from "./ItemsDashboard";
+import { useUser } from "@/hooks/useUser";
 
 const SidebarDashboard = () => {
   const pathname = usePathname();
   const partOfPathNaem = pathname.split("/")[2].split("-")[0];
   const isAdmin = partOfPathNaem === "admin" ? true : false;
   const isInstructor = partOfPathNaem === "instructor" ? true : false;
+  const { user } = useUser();
 
-  const userLogged = localStorage.getItem("user");
-  const User = JSON.parse(userLogged);
   const adminItems = [
     {
-      title: " WELCOME, MICLE OBEMA",
+      title: user?.firstName ? `WELCOME, ${user.firstName.toUpperCase()}` : "WELCOME",
       items: [
         {
           name: "Dashboard",
@@ -191,9 +191,10 @@ const SidebarDashboard = () => {
       ],
     },
   ];
+
   const instructorItems = [
     {
-      title: User.firstName,
+      title: user?.firstName || "",
       items: [
         {
           name: "Dashboard",
@@ -486,7 +487,7 @@ const SidebarDashboard = () => {
 
   const studentItems = [
     {
-      title: `WELCOME, ${User.firstName}`,
+      title: `WELCOME, ${user?.firstName || ''}`,
       items: [
         {
           name: "Dashboard",

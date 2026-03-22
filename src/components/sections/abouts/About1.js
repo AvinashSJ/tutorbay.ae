@@ -14,6 +14,7 @@ import counter3 from "@/assets/images/counter/counter__3.png";
 import counter4 from "@/assets/images/counter/counter__4.png";
 import TiltWrapper from "@/components/shared/wrappers/TiltWrapper";
 import useIsTrue from "@/hooks/useIsTrue";
+import Link from "next/link";
 const About1 = ({ children, image, hideCounter }) => {
   const isHome9 = useIsTrue("/home-9");
   const isHome9Dark = useIsTrue("/home-9-dark");
@@ -97,38 +98,45 @@ const About1 = ({ children, image, hideCounter }) => {
                 children
               ) : (
                 <>
-                  Welcome to the{" "}
+                  Find Qualified{" "}
                   <span className="relative after:w-full after:h-[7px] after:bg-secondaryColor after:absolute after:left-0 after:bottom-3 md:after:bottom-5">
-                    {isHome9 || isHome9Dark ? "Kids" : "Online"}
+                    Tutors, Institutes
                   </span>{" "}
-                  Learning Center
+                  And Local Classes
                 </>
               )}
             </h3>
             <p className="text-sm md:text-base leading-7 text-contentColor dark:text-contentColor-dark mb-6 pl-3 border-l-2 border-primaryColor">
-              25+Contrary to popular belief, Lorem Ipsum is not simply random
-              text roots in a piece of classical Latin literature from 45 BC
+              Find the perfect tutor for your needs. Learn skills with experts in every field. Get connected with qualified tutors now.
             </p>
             <ul className="space-y-[14px]">
               <li className="flex items-center group">
                 <i className="icofont-check px-2 py-2 text-primaryColor bg-whitegrey3 bg-opacity-40 group-hover:bg-primaryColor group-hover:text-white group-hover:opacity-100 mr-15px dark:bg-whitegrey1-dark"></i>
                 <p className="text-sm md:text-base font-medium text-blackColor dark:text-blackColor-dark">
-                  Lorem Ipsum is simply dummy
+                  Expert tutors in every subject
                 </p>
               </li>
               <li className="flex items-center group">
                 <i className="icofont-check px-2 py-2 text-primaryColor bg-whitegrey3 bg-opacity-40 group-hover:bg-primaryColor group-hover:text-white group-hover:opacity-100 mr-15px dark:bg-whitegrey1-dark"></i>
                 <p className="text-sm md:text-base font-medium text-blackColor dark:text-blackColor-dark">
-                  Explore a variety of fresh educational teach
+                  Both online and face-to-face learning
                 </p>
               </li>
               <li className="flex items-center group">
                 <i className="icofont-check px-2 py-2 text-primaryColor bg-whitegrey3 bg-opacity-40 group-hover:bg-primaryColor group-hover:text-white group-hover:opacity-100 mr-15px dark:bg-whitegrey1-dark"></i>
                 <p className="text-sm md:text-base font-medium text-blackColor dark:text-blackColor-dark">
-                  Lorem Ipsum is simply dummy text of
+                  Local classes and institutes available
                 </p>
               </li>
             </ul>
+            <div className="mt-6">
+              <Link
+                href="/about"
+                className="text-sm md:text-size-15 font-semibold text-whiteColor bg-primaryColor border border-primaryColor px-5 md:px-30px py-3 md:py-4 hover:text-primaryColor hover:bg-whiteColor rounded inline-block shadow-hero-action"
+              >
+                More About Us
+              </Link>
+            </div>
           </div>
         </div>
         {/* about counter  */}

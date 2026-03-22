@@ -16,16 +16,16 @@ const CoursesFilter2 = ({ type }) => {
           {/* courses Heading */}
           <div className="mb-5 md:mb-10" data-aos="fade-up">
             <div className="text-center">
-              <SectionName>Course List</SectionName>
+              <SectionName>Find Requirements</SectionName>
             </div>
 
             <HeadingPrimary text="center">
-              Perfect Online{" "}
-              <span className="relative after:w-full after:h-[7px] z-0 after:bg-secondaryColor after:absolute after:left-0 after:bottom-3 md:after:bottom-5 after:z-[-1]">
-                Course
+              Find Your Perfect{" "}
+              <span className="relative after:w-full after:h-[7px] z-0 after:bg-pink-400 after:absolute after:left-0 after:bottom-3 md:after:bottom-5 after:z-[-1]">
+                Tutor
               </span>
               <br />
-              Your Carrer
+              For Your Needs
             </HeadingPrimary>
           </div>
 

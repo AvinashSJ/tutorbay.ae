@@ -16,7 +16,7 @@ const LoginTab = () => {
     { name: "Login", content: <LoginForm /> },
     {
       name: " Sign up",
-      content: <SignUpForm />,
+      content: <SignUpForm onRegistrationSuccess={() => handleTabClick(0)} />,
     },
   ];
   return (

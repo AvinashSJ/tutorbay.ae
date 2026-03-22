@@ -4,17 +4,16 @@ import CoursesFilter2 from "@/components/sections/courses/CoursesFilter2";
 import EventsTab from "@/components/sections/events/EventsTab";
 import Features from "@/components/sections/features/Features";
 import Hero2 from "@/components/sections/hero-banners/Hero2";
-import Overview from "@/components/sections/overviews/Overview";
 import PopularSubjects2 from "@/components/sections/popular-subjects/PopularSubjects2";
 import Registration from "@/components/sections/registrations/Registration";
 import Testimonials from "@/components/sections/testimonials/Testimonials";
+import React from "react";
 
 const Home2 = () => {
   return (
     <>
       <Hero2 />
       <Features />
-      <Overview />
       <About2 />
       <PopularSubjects2 />
       <CoursesFilter2 />

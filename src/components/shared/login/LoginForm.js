@@ -39,8 +39,10 @@ const LoginForm = () => {
         userType: activeTab,
       }).unwrap();
 
-      localStorage.setItem("token", res.data.sessionDetails.accessToken);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("token", res.data.sessionDetails.accessToken);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+      }
 
       toast.success("Login successful");
       if (res.data.user.userType === "tutor") {
@@ -62,16 +64,18 @@ const LoginForm = () => {
       const result = await loginWithGoogle({
         token: credentialResponse.credential,
         clientId,
-        select_by: "btn",
-        userType: activeTab, // pass activeTab as userType
+        select_by: activeTab,
+        // userType: activeTab, // pass activeTab as userType
       }).unwrap();
+      console.log(result, "result");
 
-      localStorage.setItem("token", result.data.sessionDetails.accessToken);
-      localStorage.setItem("user", JSON.stringify(result.data.user));
-
+      if (typeof window !== "undefined") {
+        localStorage.setItem("token", result.data.sessionDetails.accessToken);
+        localStorage.setItem("user", JSON.stringify(result.data.user));
+      }
       toast.success("Login successful");
       console.log("Login successful:", result);
-      
+
       if (result.data.user.userType === "tutor") {
         router.push("/dashboards/instructor-profile");
       } else {
@@ -89,16 +93,16 @@ const LoginForm = () => {
         <h3 className="text-size-32 font-bold text-blackColor mb-2 leading-normal">
           Login
         </h3>
-        <p className="text-contentColor mb-15px">
-          Don't have an account yet?{" "}
+        {/* <p className="text-contentColor mb-15px">
+          <p>Don&apos;t have an account?</p>
           <a href="/register" className="text-primaryColor hover:underline">
             Sign up for free
           </a>
-        </p>
+        </p> */}
       </div>
 
       {/* Tabs */}
-      <div className="flex justify-center mb-4 gap-4">
+      {/* <div className="flex justify-center mb-4 gap-4">
         {["tutor", "parent"].map((role) => (
           <button
             key={role}
@@ -112,7 +116,7 @@ const LoginForm = () => {
             {role.charAt(0).toUpperCase() + role.slice(1)}
           </button>
         ))}
-      </div>
+      </div> */}
 
       {/* Login Form */}
       <form className="pt-25px" onSubmit={handleSubmit}>
