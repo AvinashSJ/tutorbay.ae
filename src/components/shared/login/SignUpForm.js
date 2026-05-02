@@ -1,15 +1,9 @@
 import {
-  useCreateTutorMutation,
-  useLoginWithGoogleMutation,
+  useRegisterUserMutation,
 } from "@/redux/services/apiSlice";
-import {
-  useVerifyOTPMutation,
-  useVerifyEmailMutation,
-} from "@/redux/services/userSlice";
 import React, { useState, useRef } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import GoogleMapModal from "../gmapsPopup";
-import GoogleLoginButton from "./GoogleLoginButton";
 import UserTypeModal from "./UserTypeModal";
 import { useRouter } from "next/navigation";
 import {
@@ -23,19 +17,18 @@ import {
 const Register = ({ onRegistrationSuccess }) => {
   const router = useRouter();
   const fileInputRef = useRef(null);
-  const [createTutor, { isLoading, isError, isSuccess, error }] =
-    useCreateTutorMutation();
-  const [loginWithGoogle] = useLoginWithGoogleMutation();
-  const [verifyOTP] = useVerifyOTPMutation();
-  const [verifyEmail] = useVerifyEmailMutation();
-
+  const [registerUser, { isLoading, isError, isSuccess, error }] =
+    useRegisterUserMutation();
+  const [loginWithGoogle] = [() => {}]; // Google OAuth to be wired separately
+  const verifyEmail = async () => {}; // Email OTP removed — Supabase handles confirmation
+  const verifyOTP = async () => {};
   const [userType, setUserType] = useState("tutor");
   const [isUserTypeModalOpen, setIsUserTypeModalOpen] = useState(false);
   const [googleCredential, setGoogleCredential] = useState(null);
   const [selectedDays, setSelectedDays] = useState([]);
   const [selectedTimeSlots, setSelectedTimeSlots] = useState({});
   const [licenseFile, setLicenseFile] = useState(null);
-  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(true); // TEMP: bypassed for testing
   const [showOTPInput, setShowOTPInput] = useState(false);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const otpInputRefs = useRef([]);
@@ -225,13 +218,16 @@ const Register = ({ onRegistrationSuccess }) => {
     }
 
     try {
-      console.log("Submitting manual registration with payload:", payload);
-      const res = await createTutor(payload).unwrap();
-      console.log("Manual registration successful:", res);
-      console.log("Response status:", res.status);
-      console.log("Response message:", res.message);
-      console.log("Response data:", res.data);
-      toast.success(res.message || "Registration successful!");
+      console.log("Submitting registration with payload:", payload);
+      const res = await registerUser({
+        email: payload.email,
+        password: payload.password,
+        fullName: `${payload.firstName} ${payload.lastName}`,
+        phone: payload.phone,
+        role: userType === "tutor" ? "TUTOR" : "PARENT",
+      }).unwrap();
+      console.log("Registration successful:", res);
+      toast.success("Registration successful! Please login to continue.");
 
       // Store user data if available
       if (res.data && res.data.user) {
@@ -281,12 +277,13 @@ const Register = ({ onRegistrationSuccess }) => {
       }
 
       setUserType("tutor");
-      setIsEmailVerified(false);
+      // Keep OTP bypass active for repeated test registrations in the same session.
+      setIsEmailVerified(true);
       setShowOTPInput(false);
       setOtp(["", "", "", "", "", ""]);
     } catch (err) {
       console.error("Error during registration:", err);
-      toast.error(err?.data?.message || "Registration failed");
+      toast.error(err?.data || err?.message || "Registration failed");
     }
   };
 
@@ -459,24 +456,10 @@ console.log(selectedType, "1");
                   onChange={handleChange}
                   value={formData.email}
                   className="w-full p-2 border rounded"
-                  disabled={isEmailVerified}
                 />
-                {!isEmailVerified && (
-                  <button
-                    type="button"
-                    onClick={handleEmailVerification}
-                    className="px-4 py-2 bg-primaryColor text-white rounded hover:bg-opacity-90"
-                  >
-                    Verify
-                  </button>
-                )}
               </div>
               {/* Message below the input */}
-              <p className="text-sm text-green-600">
-                {isEmailVerified
-                  ? "Your email has been verified."
-                  : "Please verify your email to proceed."}
-              </p>
+              <p className="text-sm text-gray-400"></p>
             </div>
 
             {/* OTP Input Section - Added key prop to force re-render */}
@@ -582,16 +565,7 @@ console.log(selectedType, "1");
           {isLoading ? "Registering..." : "Register"}
         </button>
 
-        <p className="text-center my-4 text-gray-400 text-sm">
-          or Sign up with
-        </p>
-
-        <div className="text-center">
-          <GoogleLoginButton
-            handleSuccess={handleGoogleSuccess}
-            buttonTitle="Sign Up"
-          />
-        </div>
+        {/* Google sign-up to be wired separately */}
       </form>
 
       <GoogleMapModal

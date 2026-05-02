@@ -11,8 +11,7 @@ export const store = configureStore({
   reducer: {
     [apiSlice.reducerPath]: apiSlice.reducer,
     [userSlice.reducerPath]: userSlice.reducer,
-    [parentSlice.reducerPath]: userSlice.reducer,
-    // [userApi.reducerPath]: userApi.reducer,
+    [parentSlice.reducerPath]: parentSlice.reducer,
     [walletApi.reducerPath]: walletApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>

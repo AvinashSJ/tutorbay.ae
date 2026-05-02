@@ -5,29 +5,29 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "@/hooks/useUser";
 import { useRouter } from "next/navigation";
 import EditTutorProfileForm from "./EditTutorProfileForm";
+import useAuth from "@/hooks/useAuth";
 
 const TutorProfileDetails = () => {
   const router = useRouter();
   const { userId } = useUser();
+  const { isLoggedIn, loading: authLoading } = useAuth();
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
 
-  // Check for token
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
+    if (!authLoading && !isLoggedIn) {
       router.push("/login");
     }
-  }, [router]);
+  }, [authLoading, isLoggedIn, router]);
 
   const { data: user, error, isLoading, refetch } = useGetUserQuery(userId, {
-    skip: !userId || !localStorage.getItem("token"),
+    skip: !userId || !isLoggedIn,
   });
 
   const handleEditSuccess = () => {
-    refetch(); // Refetch user data after successful edit
+    refetch();
   };
 
-  if (!userId || !localStorage.getItem("token")) {
+  if (authLoading || !userId || !isLoggedIn) {
     return (
       <div className="p-10px md:px-10 md:py-50px mb-30px bg-whiteColor dark:bg-whiteColor-dark shadow-accordion dark:shadow-accordion-dark rounded-5">
         <div className="text-center text-contentColor dark:text-contentColor-dark">

@@ -1,97 +1,98 @@
 // redux/services/userSlice.js
-import { createApi } from "@reduxjs/toolkit/query/react";
+// Reads/writes go directly to Supabase PostgREST via baseQueryWithAuth.
+// Table names match the Prisma schema (PascalCase, quoted by PostgREST).
+import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSupabase } from "@/libs/supabase";
 import { baseQueryWithAuth } from "./baseQueryWithAuth";
 
 export const userSlice = createApi({
   reducerPath: "userApi",
-  baseQuery: baseQueryWithAuth,
+  baseQuery: fakeBaseQuery(),
+  tagTypes: ["User", "TutorProfile", "Requirements"],
   endpoints: (builder) => ({
+    // Get own user profile from the User table
     getUser: builder.query({
-      query: (userId) => ({
-        url: `/users/get-user-details/${userId}`,
-        method: "GET",
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
-      }),
-      transformResponse: (response) => response.data,
+      async queryFn(userId) {
+        const supabase = getSupabase();
+        const { data, error } = await supabase
+          .from("User")
+          .select(`
+            id, email, fullName, phone, role, isActive, createdAt,
+            tutorProfile:TutorProfile(subjects, areas, bio, isVerified),
+            parentProfile:ParentProfile(area),
+            studentProfile:StudentProfile(gradeLevel, area)
+          `)
+          .eq("id", userId)
+          .single();
+        if (error) return { error: { status: 404, data: error.message } };
+        return { data };
+      },
+      providesTags: ["User"],
     }),
 
+    // Get requirements owned by a user
     getUserPosts: builder.query({
-      query: (userId) => ({
-        url: `/requirements/get-single-user-requirements?userId=${userId}`,
-        method: "GET",
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
-      }),
-      transformResponse: (response) => response.data,
+      async queryFn(userId) {
+        const supabase = getSupabase();
+        const { data, error } = await supabase
+          .from("Requirement")
+          .select("id, title, subject, area, tuitionType, status, publishedAt, createdAt")
+          .eq("ownerId", userId)
+          .order("createdAt", { ascending: false });
+        if (error) return { error: { status: 500, data: error.message } };
+        return { data };
+      },
+      providesTags: ["Requirements"],
     }),
 
-    // ✅ New API based on the curl command
+    // Get all published requirements (tutor browsing feed)
     getRequirementsList: builder.query({
-      query: (userType) => ({
-        url: `/requirements/get-parents-tutors-list?userType=${userType}`,
-        method: "GET",
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
-      }),
-      transformResponse: (response) => response.data,
+      async queryFn() {
+        const supabase = getSupabase();
+        const { data, error } = await supabase
+          .from("Requirement")
+          .select("id, title, subject, area, tuitionType, status, publishedAt, createdAt")
+          .eq("status", "PUBLISHED")
+          .order("publishedAt", { ascending: false });
+        if (error) return { error: { status: 500, data: error.message } };
+        return { data };
+      },
+      providesTags: ["Requirements"],
     }),
 
+    // Update user core fields
     updateUserDetails: builder.mutation({
-      query: ({ userId, data }) => ({
-        url: `/users/update-user-details/${userId}`,
-        method: "PATCH",
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
-        body: data,
-      }),
-      transformResponse: (response) => response.data,
-    }),
-
-    updateTutorProfile: builder.mutation({
-      query: ({ userId, ...data }) => ({
-        url: `/users/update-user-details/${userId}`,
-        method: "PATCH",
-        body: {
-          ...data,
-          userType: "tutor"
-        },
-      }),
+      async queryFn({ userId, data }) {
+        const supabase = getSupabase();
+        const { error } = await supabase
+          .from("User")
+          .update({ ...data, updatedAt: new Date().toISOString() })
+          .eq("id", userId);
+        if (error) return { error: { status: 500, data: error.message } };
+        return { data: { success: true } };
+      },
       invalidatesTags: ["User"],
     }),
 
-    verifyOTP: builder.mutation({
-      query: (data) => ({
-        url: "/users/verify-otp",
-        method: "POST",
-        body: data,
-      }),
-    }),
-
-    verifyEmail: builder.mutation({
-      query: (data) => ({
-        url: "/users/verify-email",
-        method: "POST",
-        body: data,
-      }),
+    // Upsert tutor profile (subjects, areas, bio)
+    updateTutorProfile: builder.mutation({
+      async queryFn({ userId, subjects, areas, bio }) {
+        const supabase = getSupabase();
+        const { error } = await supabase
+          .from("TutorProfile")
+          .upsert({ userId, subjects, areas, bio, updatedAt: new Date().toISOString() }, { onConflict: "userId" });
+        if (error) return { error: { status: 500, data: error.message } };
+        return { data: { success: true } };
+      },
+      invalidatesTags: ["TutorProfile", "User"],
     }),
   }),
 });
 
-export const { 
-  useGetUserQuery, 
-  useGetUserPostsQuery, 
+export const {
+  useGetUserQuery,
+  useGetUserPostsQuery,
   useGetRequirementsListQuery,
   useUpdateUserDetailsMutation,
   useUpdateTutorProfileMutation,
-  useVerifyOTPMutation,
-  useVerifyEmailMutation
 } = userSlice;

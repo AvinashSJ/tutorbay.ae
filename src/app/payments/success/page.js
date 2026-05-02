@@ -1,13 +1,11 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useHandlePaymentWebhookMutation } from '@/redux/services/walletSlice';
 import Link from 'next/link';
 
 const PaymentSuccess = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [handlePaymentWebhook] = useHandlePaymentWebhookMutation();
   const [isProcessing, setIsProcessing] = useState(true);
   const [error, setError] = useState(null);
   const [transaction, setTransaction] = useState(null);
@@ -19,20 +17,11 @@ const PaymentSuccess = () => {
       setIsProcessing(false);
       return;
     }
-
-    const processPayment = async () => {
-      try {
-        const result = await handlePaymentWebhook({ sessionId }).unwrap();
-        setTransaction(result?.data);
-        setIsProcessing(false);
-      } catch (err) {
-        setError(err.message || 'Failed to process payment');
-        setIsProcessing(false);
-      }
-    };
-
-    processPayment();
-  }, [searchParams, handlePaymentWebhook]);
+    // Payment confirmation is handled server-side via Stripe webhook + Supabase Edge Function
+    // On success page we just show success state
+    setTransaction({ sessionId });
+    setIsProcessing(false);
+  }, [searchParams]);
 
   if (isProcessing) {
     return (

@@ -1,29 +1,77 @@
-// redux/services/userSlice.js
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { baseQueryWithAuth } from "./baseQueryWithAuth";
+// redux/services/parentSlice.js
+// Requirements management via Supabase PostgREST + Edge Functions.
+import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSupabase } from "@/libs/supabase";
 
 export const parentSlice = createApi({
   reducerPath: "parentApi",
-  baseQuery: baseQueryWithAuth,
+  baseQuery: fakeBaseQuery(),
+  tagTypes: ["Requirements"],
   endpoints: (builder) => ({
+    // Create a requirement as DRAFT
     createRequirement: builder.mutation({
-      query: (payload) => ({
-        url: `/requirements/create-requirement`,
-        method: "POST",
-        body: payload,
-      }),
-      transformResponse: (response) => response.data,
+      async queryFn(payload) {
+        const supabase = getSupabase();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return { error: { status: 401, data: "Not authenticated" } };
+
+        const { data, error } = await supabase
+          .from("Requirement")
+          .insert({
+            id: crypto.randomUUID(),
+            ownerId: user.id,
+            ownerRole: user.app_metadata?.role ?? user.user_metadata?.role ?? "PARENT",
+            title: payload.title ?? payload.subject,
+            subject: payload.subject,
+            area: payload.area ?? payload.city ?? "",
+            tuitionType: payload.modeOfTeaching === "online" ? "ONLINE" :
+                         payload.modeOfTeaching === "home"   ? "HOME"   : "INSTITUTE",
+            notes: payload.notes ?? null,
+            status: "DRAFT",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          })
+          .select()
+          .single();
+
+        if (error) return { error: { status: 500, data: error.message } };
+        return { data };
+      },
+      invalidatesTags: ["Requirements"],
     }),
 
+    // Publish a requirement (calls Edge Function which also triggers matching)
+    publishRequirement: builder.mutation({
+      async queryFn(requirementId) {
+        const supabase = getSupabase();
+        const { data, error } = await supabase.functions.invoke("requirements-publish", {
+          body: { requirementId },
+        });
+        if (error) return { error: { status: 500, data: error.message } };
+        return { data };
+      },
+      invalidatesTags: ["Requirements"],
+    }),
+
+    // Get requirements by current user
     getUserPosts: builder.query({
-      query: (userId) => ({
-        url: `/requirements/get-single-user-requirements?userId=${userId}`,
-        method: "GET",
-      }),
-      transformResponse: (response) => response.data,
+      async queryFn(userId) {
+        const supabase = getSupabase();
+        const { data, error } = await supabase
+          .from("Requirement")
+          .select("id, title, subject, area, tuitionType, status, publishedAt, createdAt")
+          .eq("ownerId", userId)
+          .order("createdAt", { ascending: false });
+        if (error) return { error: { status: 500, data: error.message } };
+        return { data };
+      },
+      providesTags: ["Requirements"],
     }),
   }),
 });
 
-export const { useCreateRequirementMutation, useGetUserPostsQuery } =
-  parentSlice;
+export const {
+  useCreateRequirementMutation,
+  usePublishRequirementMutation,
+  useGetUserPostsQuery,
+} = parentSlice;

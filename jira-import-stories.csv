@@ -1,0 +1,42 @@
+Issue Type,Summary,Description,Labels,Priority,Story Points
+Story,"US-001 Parent Student Tutor registration","As a user, I can register with role-specific form (Parent, Student, Tutor). Dependencies: none.","auth,registration,mvp",High,5
+Story,"US-002 User login logout","As a user, I can login and logout securely. Dependencies: US-001.","auth,login,mvp",High,3
+Story,"US-003 Forgot password and reset","As a user, I can reset forgotten password using email OTP or reset link. Dependencies: US-002.","auth,password",Medium,5
+Story,"US-004 Role based access control","As system, I enforce RBAC for Parent, Student, Tutor, Admin, Superadmin. Dependencies: US-002.","auth,rbac,mvp",Highest,8
+Story,"US-005 Admin route and API authorization","As admin, I can access only authorized admin routes and APIs. Dependencies: US-004.","admin,rbac,mvp",High,3
+Story,"US-006 Security audit trail","As system, I log authentication and sensitive action audit trails. Dependencies: US-004.","security,audit",Medium,5
+Story,"US-101 Parent create requirement","As Parent, I can create requirement with area, tuition type, subject, and notes. Dependencies: US-001, US-004.","parent,requirements,mvp",High,5
+Story,"US-102 Parent publish requirement","As Parent, I can publish requirement. Dependencies: US-101.","parent,requirements,mvp",High,3
+Story,"US-103 Parent requirement list","As Parent, I can view my requirement list. Dependencies: US-102.","parent,requirements,mvp",High,3
+Story,"US-104 Parent status tracking","As Parent, I can track requirement status timeline. Dependencies: US-102.","parent,tracking,mvp",High,5
+Story,"US-105 Parent feedback submission","As Parent, I can submit feedback for tutor and service. Dependencies: US-103.","parent,feedback",Medium,3
+Story,"US-201 Student create requirement","As Student, I can create requirement with area and subject details. Dependencies: US-001, US-004.","student,requirements,mvp",High,5
+Story,"US-202 Student publish requirement","As Student, I can publish requirement. Dependencies: US-201.","student,requirements,mvp",High,3
+Story,"US-203 Student requirement list","As Student, I can view my requirements. Dependencies: US-202.","student,requirements,mvp",High,3
+Story,"US-204 Student status tracking","As Student, I can track requirement status timeline. Dependencies: US-202.","student,tracking,mvp",High,5
+Story,"US-205 Student feedback submission","As Student, I can submit feedback for tutor and service. Dependencies: US-203.","student,feedback",Medium,3
+Story,"US-301 Auto create tutor wallet","As Tutor, wallet is auto-created on registration. Dependencies: US-001.","tutor,wallet,mvp",Highest,5
+Story,"US-302 Seed trial credits","As Tutor, I receive 15 trial credits at wallet creation. Dependencies: US-301.","tutor,wallet,mvp",Highest,3
+Story,"US-303 Tutor open requirements list","As Tutor, I can view open requirements list. Dependencies: US-102, US-202, US-004.","tutor,requirements,mvp",High,5
+Story,"US-304 Debit credits on unlock","As system, credits are debited when tutor unlocks contact phone or premium requirement details. Dependencies: US-302, US-303.","tutor,wallet,mvp",Highest,8
+Story,"US-305 Wallet balance and transactions","As Tutor, I can view wallet transactions and current balance. Dependencies: US-304.","tutor,wallet,mvp",High,3
+Story,"US-306 Tutor recharge credits","As Tutor, I can recharge credits using payment gateway. Dependencies: US-305.","tutor,payments,mvp",Highest,8
+Story,"US-307 Schedule demo","As Tutor, I can schedule demo with Parent or Student. Dependencies: US-303.","tutor,demo",Medium,5
+Story,"US-308 Demo feedback","As Tutor, I can submit feedback after demo. Dependencies: US-307.","tutor,demo,feedback",Medium,3
+Story,"US-309 Tutor feedback for parent student","As Tutor, I can submit feedback for Parent or Student. Dependencies: US-303.","tutor,feedback",Medium,3
+Story,"US-310 Tutor blog article submission","As Tutor, I can submit blogs or articles through forms. Dependencies: US-001.","tutor,content",Low,5
+Story,"US-311 Tutor support ticket","As Tutor, I can raise support ticket and track responses. Dependencies: US-001.","tutor,support",Medium,5
+Story,"US-401 Admin login","As Admin, I can login to admin portal. Dependencies: US-002, US-005.","admin,auth,mvp",High,3
+Story,"US-402 Superadmin assign admin roles","As Superadmin, I can assign admin roles and permissions. Dependencies: US-004, US-401.","superadmin,admin,rbac",High,8
+Story,"US-403 Admin user directories","As Admin, I can access Students, Parents, and Tutors pages. Dependencies: US-401.","admin,users,mvp",High,5
+Story,"US-404 Admin CRUD requirements","As Admin, I can manually perform CRUD on Parent and Student requirements. Dependencies: US-403, US-102, US-202.","admin,requirements,mvp",High,8
+Story,"US-405 Admin analytics dashboard","As Admin, I can access analytics for users, requirements, and matches. Dependencies: US-403.","admin,analytics,mvp",Medium,8
+Story,"US-406 Admin moderate blogs","As Admin, I can approve or reject tutor blog submissions. Dependencies: US-310, US-401.","admin,content",Medium,5
+Story,"US-407 Admin support ticket handling","As Admin, I can respond and manage tutor support tickets. Dependencies: US-311, US-401.","admin,support",Medium,5
+Story,"US-501 Automated matching engine","As system, requirement is auto-matched with tutors by area, subject, and tuition type. Dependencies: US-102, US-202, US-303.","matching,mvp",Highest,13
+Story,"US-502 Admin matched profiles view","As Admin, I can check matched profiles with score and reason. Dependencies: US-501, US-401.","admin,matching,mvp",High,8
+Story,"US-503 Admin override or rerun match","As Admin, I can override and rerun matching manually. Dependencies: US-502.","admin,matching",Medium,5
+Story,"US-601 Download user reports","As Admin, I can download reports of users. Dependencies: US-403.","admin,reports,mvp",Medium,5
+Story,"US-602 Download requirement reports","As Admin, I can download reports of requirements. Dependencies: US-404.","admin,reports,mvp",Medium,5
+Story,"US-603 Download match reports","As Admin, I can download reports of matches. Dependencies: US-502.","admin,reports,mvp",Medium,5
+Story,"US-604 Filtered CSV XLSX exports","As Admin, I can filter reports by date, role, status and export CSV or XLSX. Dependencies: US-601, US-602, US-603.","admin,reports",Medium,8
