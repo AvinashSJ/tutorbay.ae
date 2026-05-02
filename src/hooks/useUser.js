@@ -11,7 +11,7 @@ export const useUser = () => {
       if (userLogged) {
         const parsedUser = JSON.parse(userLogged);
         setUser(parsedUser);
-        setUserId(parsedUser?.userId);
+        setUserId(parsedUser?.id ?? parsedUser?.userId ?? null);
       }
     }
   }, []);

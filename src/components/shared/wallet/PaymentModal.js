@@ -9,15 +9,25 @@ const PaymentModal = ({ isOpen, onClose, onSuccess }) => {
   const [error, setError] = useState('');
   const [createPayment, { isLoading }] = useCreatePaymentMutation();
 
+  const getErrorMessage = (value) => {
+    if (!value) return '';
+    if (typeof value === 'string') return value;
+    if (value instanceof Error) return value.message;
+    if (typeof value?.data === 'string') return value.data;
+    if (typeof value?.data?.message === 'string') return value.data.message;
+    if (typeof value?.message === 'string') return value.message;
+    return 'Payment failed. Please try again.';
+  };
+
   const handlePayment = async (e) => {
     e.preventDefault();
     setError('');
 
     try {
       const paymentData = {
-        userId: user._id,
+        userId: user?.id ?? user?._id,
         email: user.email,
-        userType: user.userType,
+        userType: user?.role,
         amount: parseFloat(amount),
         currency: 'aed', // UAE currency
         customerEmail: user.email
@@ -32,7 +42,7 @@ const PaymentModal = ({ isOpen, onClose, onSuccess }) => {
         setError('Failed to create payment session');
       }
     } catch (err) {
-      setError(err.message || 'Payment failed. Please try again.');
+      setError(getErrorMessage(err));
     }
   };
 
@@ -70,7 +80,7 @@ const PaymentModal = ({ isOpen, onClose, onSuccess }) => {
 
           {error && (
             <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
-              {error}
+              {getErrorMessage(error)}
             </div>
           )}
 

@@ -24,9 +24,9 @@ const LoginForm = () => {
       }
       toast.success("Login successful");
       if (role === "TUTOR") {
-        router.push("/dashboards/instructor-profile");
+        router.push("/instructor-profile");
       } else {
-        router.push("/dashboards/student-profile");
+        router.push("/parent-profile");
       }
     } catch (err) {
       const msg = err?.data || "";

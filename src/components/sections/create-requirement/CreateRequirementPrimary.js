@@ -67,6 +67,12 @@ const CreateRequirementForm = () => {
     setActiveStep((prev) => prev - 1);
   };
 
+  const handleFormKeyDown = (e) => {
+    if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+      e.preventDefault();
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission
 
@@ -341,7 +347,7 @@ const CreateRequirementForm = () => {
         </div>
 
         {/* Form Content */}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
           {renderStepContent()}
 
           {/* Navigation Buttons */}

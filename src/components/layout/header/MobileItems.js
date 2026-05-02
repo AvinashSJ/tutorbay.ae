@@ -12,7 +12,7 @@ const MobileMenuItems = () => {
   const { user, isLoggedIn } = useAuth();
 
   const dynamicItems = isLoggedIn
-    ? user.userType === "parent"
+    ? user?.role === "PARENT"
       ? [{ id: 2, name: "Find Tutor", path: "/find-tutors" }]
       : [{ id: 3, name: "Find Requirements", path: "/find-requirements" }]
     : [{ id: 3, name: "Find Requirements", path: "/find-requirements" }];
@@ -21,7 +21,7 @@ const MobileMenuItems = () => {
     {
       id: 1,
       name: "Home",
-      path: "/",
+      path: "/home",
       // accordion: "accordion",
       // children: <AccordionHome />,
     },

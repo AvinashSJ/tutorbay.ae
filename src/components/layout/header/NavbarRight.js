@@ -46,7 +46,7 @@ const NavbarRight = () => {
             <LoginButton />
           </li>
         )}
-        {isLoggedIn && user?.userType === "tutor" && (
+        {isLoggedIn && user?.role === "TUTOR" && (
           <li className="hidden lg:block">
             <WalletButton />
           </li>

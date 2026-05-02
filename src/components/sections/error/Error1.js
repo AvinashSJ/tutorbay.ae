@@ -21,7 +21,7 @@ const Error1 = () => {
           </p>
           <div className="mt-50px text-center">
             <Link
-              href="/"
+              href="/home"
               className="text-size-15 font-semibold text-whiteColor bg-primaryColor border border-primaryColor px-43px py-4 hover:text-primaryColor hover:bg-whiteColor rounded inline-block dark:hover:bg-whiteColor-dark dark:hover:text-whiteColor"
             >
               Back To Home <i className="icofont-simple-right"></i>

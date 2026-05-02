@@ -8,7 +8,9 @@ import { usePathname } from "next/navigation";
 
 const HeroDashboard = () => {
   const pathname = usePathname();
-  const partOfPathNaem = pathname.split("/")[2].split("-")[0];
+  const pathParts = pathname.split("/").filter(Boolean);
+  const currentSection = pathParts[0] === "dashboards" ? pathParts[1] : pathParts[0];
+  const partOfPathNaem = currentSection?.split("-")[0] || "";
   const isAdmin = partOfPathNaem === "admin" ? true : false;
   const isInstructor = partOfPathNaem === "instructor" ? true : false;
 
@@ -33,17 +35,17 @@ const HeroDashboard = () => {
                 className="w-27 h-27 md:w-22 md:h-22 lg:w-27 lg:h-27 rounded-full p-1 border-2 border-darkdeep7 box-content"
               />
             </div>{" "}
-            {isAdmin || user?.userType === "tutor" ? (
+            {isAdmin || user?.role === "TUTOR" ? (
               <div className="text-whiteColor font-bold text-center sm:text-start">
                 <h5 className="text-xl leading-1.2 mb-5px">Hello</h5>
                 <h2 className="text-2xl leading-1.24">
-                  {user?.firstName} {user?.lastName}
+                  {user?.fullName || user?.email}
                 </h2>
               </div>
             ) : (
               <div className="text-whiteColor font-bold text-center sm:text-start">
                 <h5 className="text-2xl leading-1.24 mb-5px">
-                  {user?.firstName} {user?.lastName}
+                  {user?.fullName || user?.email}
                 </h5>
                 <ul className="flex items-center gap-15px">
                   <li className="text-sm font-normal flex items-center gap-0.5">
@@ -114,13 +116,12 @@ const HeroDashboard = () => {
           ) : (
             ""
           )}
-          {console.log(user, "user?.userType")}
           <div>
             <Link
               href={
-                user?.userType === "tutor"
+                isInstructor || user?.role === "TUTOR"
                   ? `/find-requirements`
-                  : `/dashboards/create-requirement`
+                  : `/create-requirement`
               }
               className={`text-size-15 border text-whiteColor   ${
                 isAdmin
@@ -130,7 +131,7 @@ const HeroDashboard = () => {
                   : "bg-secondaryColor border-secondaryColor hover:text-secondaryColor"
               }  px-25px py-10px hover:bg-whiteColor rounded group text-nowrap flex gap-1 items-center`}
             >
-              {isAdmin || isInstructor
+              {isAdmin || isInstructor || user?.role === "TUTOR"
                 ? "Check for requirements"
                 : "Post a New Requirement "}
               <svg

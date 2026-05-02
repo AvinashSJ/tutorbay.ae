@@ -10,6 +10,16 @@ const PaymentSuccess = () => {
   const [error, setError] = useState(null);
   const [transaction, setTransaction] = useState(null);
 
+  const getErrorMessage = (value) => {
+    if (!value) return '';
+    if (typeof value === 'string') return value;
+    if (value instanceof Error) return value.message;
+    if (typeof value?.data === 'string') return value.data;
+    if (typeof value?.data?.message === 'string') return value.data.message;
+    if (typeof value?.message === 'string') return value.message;
+    return 'Payment failed';
+  };
+
   useEffect(() => {
     const sessionId = searchParams.get('session_id');
     if (!sessionId) {
@@ -43,9 +53,9 @@ const PaymentSuccess = () => {
             <i className="icofont-close-circled"></i>
           </div>
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">Payment Failed</h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">{error}</p>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">{getErrorMessage(error)}</p>
           <Link
-            href="/dashboards/wallet"
+            href="/wallet"
             className="inline-block px-6 py-3 bg-primaryColor text-white rounded-md hover:bg-primaryColor/90 transition-colors"
           >
             Return to Wallet
@@ -95,7 +105,7 @@ const PaymentSuccess = () => {
 
         <div className="space-x-4">
           <Link
-            href="/dashboards/wallet"
+            href="/wallet"
             className="inline-block px-6 py-3 bg-primaryColor text-white rounded-md hover:bg-primaryColor/90 transition-colors"
           >
             View Wallet

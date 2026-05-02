@@ -6,7 +6,9 @@ import { useUser } from "@/hooks/useUser";
 
 const SidebarDashboard = () => {
   const pathname = usePathname();
-  const partOfPathNaem = pathname.split("/")[2].split("-")[0];
+  const pathParts = pathname.split("/").filter(Boolean);
+  const currentSection = pathParts[0] === "dashboards" ? pathParts[1] : pathParts[0];
+  const partOfPathNaem = currentSection?.split("-")[0] || "";
   const isAdmin = partOfPathNaem === "admin" ? true : false;
   const isInstructor = partOfPathNaem === "instructor" ? true : false;
   const { user } = useUser();
@@ -219,7 +221,7 @@ const SidebarDashboard = () => {
         },
         {
           name: "My Profile",
-          path: "/dashboards/instructor-profile",
+          path: "/instructor-profile",
           icon: (
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -512,7 +514,7 @@ const SidebarDashboard = () => {
         },
         {
           name: "My Profile",
-          path: "/dashboards/student-profile",
+          path: "/parent-profile",
           icon: (
             <svg
               xmlns="http://www.w3.org/2000/svg"

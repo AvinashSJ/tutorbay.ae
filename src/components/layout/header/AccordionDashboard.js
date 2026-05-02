@@ -59,7 +59,7 @@ const AccordionDashboard = () => {
         {
           name: "Ins. Profile",
 
-          path: "/dashboards/instructor-profile",
+          path: "/instructor-profile",
         },
         {
           name: "Message",
@@ -128,7 +128,7 @@ const AccordionDashboard = () => {
         {
           name: "Profile",
 
-          path: "/dashboards/student-profile",
+          path: "/parent-profile",
         },
         {
           name: "Message",

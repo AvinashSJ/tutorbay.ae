@@ -14,7 +14,7 @@ const PaymentCancel = () => {
         </p>
         <div className="space-x-4">
           <Link
-            href="/dashboards/wallet"
+            href="/wallet"
             className="inline-block px-6 py-3 bg-primaryColor text-white rounded-md hover:bg-primaryColor/90 transition-colors"
           >
             Try Again

@@ -326,9 +326,9 @@ const Register = ({ onRegistrationSuccess }) => {
 
       // Redirect based on user type
       if (formData.userType === "tutor") {
-        router.push("/dashboards/instructor-profile");
+        router.push("/instructor-profile");
       } else {
-        router.push("/dashboards/student-profile");
+        router.push("/parent-profile");
       }
 
       // Clean up
@@ -389,11 +389,11 @@ console.log(selectedType, "selectedType");
       if (selectedType === "tutor") {
 console.log(selectedType, "1");
 
-        router.push("/dashboards/instructor-profile");
+        router.push("/instructor-profile");
       } else {
         console.log(selectedType, "2");
 
-        router.push("/dashboards/student-profile");
+        router.push("/parent-profile");
       }
     } catch (error) {
       toast.error("Registration failed");

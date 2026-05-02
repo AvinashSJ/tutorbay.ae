@@ -68,7 +68,7 @@ const DropdownDashboard = () => {
         {
           name: "Ins. Profile",
           status: null,
-          path: "/dashboards/instructor-profile",
+          path: "/instructor-profile",
           type: "secondary",
         },
         {
@@ -150,7 +150,7 @@ const DropdownDashboard = () => {
         {
           name: "Profile",
           status: null,
-          path: "/dashboards/student-profile",
+          path: "/parent-profile",
           type: "secondary",
         },
         {

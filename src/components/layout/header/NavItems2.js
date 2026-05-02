@@ -14,7 +14,7 @@ const {user, isLoggedIn} = useAuth()
     {
       id: 1,
       name: "Home",
-      path: "/home-2",
+      path: "/home",
       // dropdown: <DropdownHome />,
       isRelative: true,
     },
@@ -25,7 +25,7 @@ const {user, isLoggedIn} = useAuth()
       dropdown: null,
       isRelative: false,
     },
-    ...(isLoggedIn && user.userType === "parent"
+    ...(isLoggedIn && user?.role === "PARENT"
       ? [
           {
             id: 2,
@@ -35,7 +35,7 @@ const {user, isLoggedIn} = useAuth()
             isRelative: false,
           },
         ]
-      :isLoggedIn &&  user.userType === "tutor"
+      :isLoggedIn && user?.role === "TUTOR"
       ? [
           {
             id: 3,

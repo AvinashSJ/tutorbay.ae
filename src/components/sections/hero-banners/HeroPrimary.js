@@ -24,7 +24,7 @@ const HeroPrimary = ({ title, path }) => {
             <ul className="flex gap-1 justify-center  ">
               <li>
                 <Link
-                  href="/"
+                  href="/home"
                   className="text-lg text-blackColor2 dark:text-blackColor2-dark hover:text-primaryColor dark:hover:text-primaryColor"
                 >
                   Home <i className="icofont-simple-right"></i>

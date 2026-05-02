@@ -13,9 +13,9 @@ const LoginButton = () => {
     <Link
       href={
         isLoggedIn
-          ? user.userType === "parent"
-            ? "/dashboards/student-profile"
-            : "/dashboards/instructor-profile"
+          ? user?.role === "TUTOR"
+            ? "/instructor-profile"
+            : "/parent-profile"
           : "/login"
       }
       className="text-size-12 2xl:text-size-15 px-15px py-2 text-blackColor hover:text-whiteColor bg-whiteColor block hover:bg-primaryColor border border-borderColor1 rounded-standard font-semibold mr-[7px] 2xl:mr-15px dark:text-blackColor-dark dark:bg-whiteColor-dark dark:hover:bg-primaryColor dark:hover:text-whiteColor dark:hover:border-primaryColor"

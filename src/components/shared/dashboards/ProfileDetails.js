@@ -28,6 +28,11 @@ const ProfileDetails = () => {
     refetch();
   };
 
+  const profileDetails = user?.studentProfile ?? user?.parentProfile ?? null;
+  const fullName = user?.fullName ?? "";
+  const [firstName = "", ...restName] = fullName.split(" ").filter(Boolean);
+  const lastName = restName.join(" ");
+
   if (authLoading || !userId || !isLoggedIn) {
     return (
       <div className="p-10px md:px-10 md:py-50px mb-30px bg-whiteColor dark:bg-whiteColor-dark shadow-accordion dark:shadow-accordion-dark rounded-5">
@@ -59,7 +64,7 @@ const ProfileDetails = () => {
   }
 
   // If user is a tutor, render TutorProfileDetails
-  if (user?.userType === "tutor") {
+  if (user?.role === "TUTOR") {
     return <TutorProfileDetails />;
   }
 
@@ -90,11 +95,11 @@ const ProfileDetails = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="text-gray-600">First Name</div>
-              <div>{user?.firstName}</div>
+              <div>{firstName || 'Not specified'}</div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="text-gray-600">Last Name</div>
-              <div>{user?.lastName}</div>
+              <div>{lastName || 'Not specified'}</div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="text-gray-600">Email</div>
@@ -106,7 +111,7 @@ const ProfileDetails = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="text-gray-600">User Type</div>
-              <div className="capitalize">{user?.userType}</div>
+              <div className="capitalize">{user?.role?.toLowerCase() || 'Not specified'}</div>
             </div>
           </div>
         </div>
@@ -119,15 +124,15 @@ const ProfileDetails = () => {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="text-gray-600">Curriculum</div>
-              <div>{user?.parentStudentProfile?.curriculum || 'Not specified'}</div>
+              <div>{profileDetails?.curriculum || 'Not specified'}</div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="text-gray-600">Subject</div>
-              <div>{user?.parentStudentProfile?.subject || 'Not specified'}</div>
+              <div>{profileDetails?.subject || 'Not specified'}</div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="text-gray-600">Grade</div>
-              <div>{user?.parentStudentProfile?.grade ? `Year ${user.parentStudentProfile.grade}` : 'Not specified'}</div>
+              <div>{profileDetails?.gradeLevel ? `Year ${profileDetails.gradeLevel}` : 'Not specified'}</div>
             </div>
           </div>
         </div>
@@ -140,14 +145,14 @@ const ProfileDetails = () => {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="text-gray-600">City</div>
-              <div>{user?.parentStudentProfile?.city || 'Not specified'}</div>
+              <div>{profileDetails?.city || profileDetails?.area || 'Not specified'}</div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="text-gray-600">Location</div>
               <div>
-                {user?.parentStudentProfile?.location?.currentLocationURL ? (
+                {profileDetails?.location?.currentLocationURL ? (
                   <a 
-                    href={user.parentStudentProfile.location.currentLocationURL}
+                    href={profileDetails.location.currentLocationURL}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-primaryColor hover:underline"
@@ -170,7 +175,7 @@ const ProfileDetails = () => {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="text-gray-600">Emirates ID</div>
-              <div>{user?.parentStudentProfile?.emirateId || 'Not specified'}</div>
+              <div>{profileDetails?.emirateId || 'Not specified'}</div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="text-gray-600">Registration Method</div>
@@ -178,7 +183,7 @@ const ProfileDetails = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="text-gray-600">Status</div>
-              <div className="capitalize">{user?.status || 'Not specified'}</div>
+              <div className="capitalize">{user?.isActive ? 'active' : 'inactive'}</div>
             </div>
           </div>
         </div>
