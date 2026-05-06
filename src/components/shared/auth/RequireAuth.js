@@ -1,10 +1,9 @@
 "use client";
-import WalletMain from "@/components/layout/main/WalletMain";
+import { useEffect } from "react";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
-const WalletPage = () => {
+const RequireAuth = ({ children }) => {
   const { isLoggedIn, loading } = useAuth();
   const router = useRouter();
 
@@ -17,14 +16,14 @@ const WalletPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Loading...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primaryColor"></div>
       </div>
     );
   }
 
   if (!isLoggedIn) return null;
 
-  return <WalletMain />;
+  return <>{children}</>;
 };
 
-export default WalletPage;
+export default RequireAuth;

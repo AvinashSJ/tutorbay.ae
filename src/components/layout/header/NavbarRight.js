@@ -8,6 +8,7 @@ import LoginButton from "./LoginButton";
 import { useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
 import WalletButton from "@/components/shared/wallet/WalletButton";
+import { getSupabase } from "@/libs/supabase";
 
 const NavbarRight = () => {
   const isHome4 = useIsTrue("/home-4");
@@ -19,15 +20,18 @@ const NavbarRight = () => {
   const router = useRouter();
   const { isLoggedIn, user } = useAuth();
 
-  const handleLogout = () => {
-    // Clear localStorage/token (modify as per your auth)
-    localStorage.removeItem("token"); // or sessionStorage, or cookie logic
-
-    // Optional: clear cookies if used
-    // document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-
-    // Redirect to login or homepage
-    router.push("/login"); // or replace with '/'
+  const handleLogout = async () => {
+    try {
+      const supabase = getSupabase();
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.error("Supabase signOut error:", err);
+    }
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+    }
+    router.push("/login");
   };
 
   return (

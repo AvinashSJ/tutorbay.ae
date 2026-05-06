@@ -6,6 +6,26 @@ const useAuth = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Helper to extract role from user - prioritize user_metadata.role (set during Google signup)
+  const extractRole = (sessionUser) => {
+    // First check localStorage (set during Google signup flow)
+    if (typeof window !== "undefined") {
+      try {
+        const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+        if (storedUser?.role) {
+          return storedUser.role;
+        }
+      } catch (e) {
+        // Ignore parse errors
+      }
+    }
+    // Then check user_metadata (updated by callback page)
+    const role = sessionUser.user_metadata?.role;
+    if (role) return role;
+    // Fallback to app_metadata
+    return sessionUser.app_metadata?.role ?? "PARENT";
+  };
+
   useEffect(() => {
     const supabase = getSupabase();
 
@@ -17,7 +37,7 @@ const useAuth = () => {
           id: session.user.id,
           email: session.user.email,
           fullName: session.user.user_metadata?.fullName ?? "",
-          role: session.user.app_metadata?.role ?? session.user.user_metadata?.role ?? "PARENT",
+          role: extractRole(session.user),
         });
       }
       setLoading(false);
@@ -31,7 +51,7 @@ const useAuth = () => {
           id: session.user.id,
           email: session.user.email,
           fullName: session.user.user_metadata?.fullName ?? "",
-          role: session.user.app_metadata?.role ?? session.user.user_metadata?.role ?? "PARENT",
+          role: extractRole(session.user),
         });
       } else {
         setUser(null);
