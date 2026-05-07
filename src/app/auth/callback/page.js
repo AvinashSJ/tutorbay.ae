@@ -58,7 +58,7 @@ const AuthCallback = () => {
         toast.success("Successfully signed in!");
 
         if (role === "TUTOR") {
-          router.push("/instructor-profile");
+          router.push("/tutor-registration");
         } else {
           router.push("/parent-profile");
         }

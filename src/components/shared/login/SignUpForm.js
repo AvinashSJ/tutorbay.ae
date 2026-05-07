@@ -11,7 +11,7 @@ import { getSupabase } from "@/libs/supabase";
 const Register = ({ onRegistrationSuccess }) => {
   const router = useRouter();
   const [registerUser, { isLoading }] = useRegisterUserMutation();
-  const [userType, setUserType] = useState("tutor");
+  const [userType, setUserType] = useState("TUTOR");
   const [isUserTypeModalOpen, setIsUserTypeModalOpen] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -78,23 +78,19 @@ const Register = ({ onRegistrationSuccess }) => {
         fullName: `${payload.firstName} ${payload.lastName}`,
         phone: payload.phone,
         emiratesId: payload.emiratesId,
-        role: userType === "tutor" ? "TUTOR" : "PARENT",
+        role: userType === "TUTOR" ? "TUTOR" : "PARENT",
       }).unwrap();
 
-      toast.success("Registration successful! Please login to continue.");
+      toast.success("Registration successful! Redirecting to complete your profile...");
 
-      // Switch to login tab after a short delay
-      setTimeout(() => {
-        if (onRegistrationSuccess) {
-          onRegistrationSuccess();
-        } else {
-          try {
-            window.location.href = "/login";
-          } catch (fallbackError) {
-            toast.error("Registration successful but tab switch failed.");
-          }
-        }
-      }, 1500);
+        // Redirect based on user type after a short delay
+        setTimeout(() => {
+          if (userType === "TUTOR") {
+           window.location.href = "/tutor-registration";
+         } else {
+           window.location.href = "/parent-profile";
+         }
+       }, 1500);
 
       // Reset form
       setFormData({
@@ -106,7 +102,7 @@ const Register = ({ onRegistrationSuccess }) => {
         confirmPassword: "",
         emiratesId: "",
       });
-      setUserType("tutor");
+      setUserType("TUTOR");
     } catch (err) {
       console.error("Error during registration:", err);
       toast.error(err?.data || err?.message || "Registration failed");
@@ -120,7 +116,7 @@ const Register = ({ onRegistrationSuccess }) => {
 
   const handleUserTypeSelect = async (selectedType) => {
     try {
-      const role = selectedType === "tutor" ? "TUTOR" : "PARENT";
+      const role = selectedType === "TUTOR" ? "TUTOR" : "PARENT";
 
       if (typeof window !== "undefined") {
         // Set a cookie (most reliable for OAuth redirects)
@@ -153,7 +149,7 @@ const Register = ({ onRegistrationSuccess }) => {
       <Toaster position="top-center" reverseOrder={false} />
 
       <div className="flex justify-center mb-6">
-        {["tutor", "parent"].map((type) => (
+        {["TUTOR", "PARENT"].map((type) => (
           <button
             key={type}
             onClick={() => setUserType(type)}
