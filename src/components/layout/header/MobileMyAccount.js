@@ -1,9 +1,11 @@
 import useAuth from "@/hooks/useAuth";
 import Link from "next/link";
 import React from "react";
+import { useGetWalletBalanceQuery } from "@/redux/services/walletSlice";
 
 const MobileMyAccount = () => {
   const { isLoggedIn, user } = useAuth();
+  const { data: wallet } = useGetWalletBalanceQuery();
 
   const dashboardLink =
     user?.role === "TUTOR"
@@ -24,10 +26,10 @@ const MobileMyAccount = () => {
               </Link>
               {user?.role === "TUTOR" && (
                 <Link
-                  href="/wallet"
+                  href="/instructor-profile?section=wallet"
                   className="block text-darkdeep1 text-sm font-medium hover:text-secondaryColor dark:text-whiteColor dark:hover:text-secondaryColor mt-2"
                 >
-                  Wallet (${user?.walletBalance?.toFixed(2) || '0.00'})
+                  Wallet (${(wallet?.balance ?? 0).toFixed(2)})
                 </Link>
               )}
             </>

@@ -6,6 +6,7 @@ import { userSlice } from "./services/userSlice";
 import { parentSlice } from "./services/parentSlice";
 // import { userApi } from './services/userSlice';
 import { walletApi } from './services/walletSlice';
+import { reviewApi } from './services/reviewSlice';
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     [userSlice.reducerPath]: userSlice.reducer,
     [parentSlice.reducerPath]: parentSlice.reducer,
     [walletApi.reducerPath]: walletApi.reducer,
+    [reviewApi.reducerPath]: reviewApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -20,7 +22,8 @@ export const store = configureStore({
       userSlice.middleware,
       parentSlice.middleware,
       // userApi.middleware,
-      walletApi.middleware
+      walletApi.middleware,
+      reviewApi.middleware
     ),
 });
 

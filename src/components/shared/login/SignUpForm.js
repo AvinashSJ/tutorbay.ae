@@ -7,6 +7,7 @@ import UserTypeModal from "./UserTypeModal";
 import { useRouter } from "next/navigation";
 import { validateSignupForm, formatEmiratesId } from "@/libs/validations";
 import { getSupabase } from "@/libs/supabase";
+import { trackUserSignup } from "@/services/analytics";
 
 const Register = ({ onRegistrationSuccess }) => {
   const router = useRouter();
@@ -14,15 +15,24 @@ const Register = ({ onRegistrationSuccess }) => {
   const [userType, setUserType] = useState("TUTOR");
   const [isUserTypeModalOpen, setIsUserTypeModalOpen] = useState(false);
 
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    phone: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    emiratesId: "",
-  });
+  const initialFormData = () => {
+    if (typeof window === "undefined") return { firstName: "", lastName: "", phone: "", email: "", password: "", confirmPassword: "", emiratesId: "" };
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get("name") || "";
+    const firstName = name.includes(" ") ? name.split(" ")[0] : name;
+    const lastName = name.includes(" ") ? name.split(" ").slice(1).join(" ") : "";
+    return {
+      firstName,
+      lastName,
+      phone: params.get("phone") || "",
+      email: params.get("email") || "",
+      password: "",
+      confirmPassword: "",
+      emiratesId: "",
+    };
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
@@ -35,10 +45,10 @@ const Register = ({ onRegistrationSuccess }) => {
 
     // Special handling for Emirates ID - auto-format with dashes
     if (name === "emiratesId") {
-      const cleanValue = value.replace(/\D/g, '');
+      const cleanValue = value.replace(/\D/g, '').slice(0, 15);
       setFormData((prev) => ({
         ...prev,
-        [name]: type === "checkbox" ? checked : cleanValue,
+        [name]: cleanValue,
       }));
       return;
     }
@@ -72,16 +82,29 @@ const Register = ({ onRegistrationSuccess }) => {
     };
 
     try {
+      const role = userType === "TUTOR" ? "TUTOR" : "PARENT";
+      console.log("[SignUpForm] Registering with role:", role);
+      
       const res = await registerUser({
         email: payload.email,
         password: payload.password,
         fullName: `${payload.firstName} ${payload.lastName}`,
         phone: payload.phone,
         emiratesId: payload.emiratesId,
-        role: userType === "TUTOR" ? "TUTOR" : "PARENT",
+        role: role,
       }).unwrap();
 
+      console.log("Signup successful, payload emiratesId:", payload.emiratesId);
+
+      trackUserSignup("email");
       toast.success("Registration successful! Redirecting to complete your profile...");
+
+      // Store role in localStorage for persistence across page reloads
+      if (typeof window !== "undefined") {
+        const tempUser = { role, email: payload.email };
+        localStorage.setItem("pending_role", role);
+        console.log("[SignUpForm] Stored pending role:", role);
+      }
 
         // Redirect based on user type after a short delay
         setTimeout(() => {
@@ -116,7 +139,8 @@ const Register = ({ onRegistrationSuccess }) => {
 
   const handleUserTypeSelect = async (selectedType) => {
     try {
-      const role = selectedType === "TUTOR" ? "TUTOR" : "PARENT";
+      const normalizedType = selectedType.toUpperCase();
+      const role = normalizedType === "TUTOR" ? "TUTOR" : "PARENT";
 
       if (typeof window !== "undefined") {
         // Set a cookie (most reliable for OAuth redirects)
@@ -127,6 +151,10 @@ const Register = ({ onRegistrationSuccess }) => {
       }
 
       setIsUserTypeModalOpen(false);
+
+      // Track AFTER redirect is initiated since userId won't be available post-redirect
+      // We track with method only, userId will be tracked on callback
+      trackUserSignup("google");
 
       const supabase = getSupabase();
       const { error } = await supabase.auth.signInWithOAuth({
@@ -231,10 +259,10 @@ const Register = ({ onRegistrationSuccess }) => {
           <div>
             <input
               name="emiratesId"
-              placeholder="Emirates ID (784-XXXX-XXXXXXX-X)"
+              placeholder="Emirates ID (7841234567890128)"
               onChange={handleChange}
-              value={formatEmiratesId(formData.emiratesId)}
-              maxLength={20}
+              value={formData.emiratesId}
+              maxLength={15}
               className={`w-full p-2 border rounded ${errors.emiratesId ? 'border-red-500' : 'border-gray-300'}`}
             />
             {errors.emiratesId && <p className="text-red-500 text-xs mt-1">{errors.emiratesId}</p>}

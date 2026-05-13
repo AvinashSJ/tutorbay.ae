@@ -1,18 +1,33 @@
 "use client";
-import { useGetUserQuery } from "@/redux/services/userSlice";
+import { useGetUserQuery, useUpdateUserDetailsMutation } from "@/redux/services/userSlice";
+import { getSupabase } from "@/libs/supabase";
 import moment from "moment/moment";
 import React, { useState, useEffect } from "react";
 import { useUser } from "@/hooks/useUser";
 import { useRouter } from "next/navigation";
-import EditProfileForm from "./EditProfileForm";
 import TutorProfileDetails from "./TutorProfileDetails";
 import useAuth from "@/hooks/useAuth";
+import toast from "react-hot-toast";
+import GoogleMapModal from "../gmapsPopup";
 
 const ProfileDetails = () => {
   const router = useRouter();
   const { userId } = useUser();
   const { isLoggedIn, loading: authLoading } = useAuth();
-  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const [updateUserDetails, { isLoading: isSaving }] = useUpdateUserDetailsMutation();
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    emiratesId: "",
+    city: "",
+    profileImage: null,
+    backgroundImage: null,
+    currentLocationURL: "",
+    mapLocation: [{ lat: "", lng: "" }],
+  });
 
   useEffect(() => {
     if (!authLoading && !isLoggedIn) {
@@ -24,14 +39,114 @@ const ProfileDetails = () => {
     skip: !userId || !isLoggedIn,
   });
 
-  const handleEditSuccess = () => {
-    refetch();
+  useEffect(() => {
+    if (!user) return;
+    const fullName = user.fullName ?? "";
+    const [fn = "", ...rest] = fullName.split(" ").filter(Boolean);
+    const profile = user.studentProfile ?? user.parentProfile ?? {};
+
+    setFormData((prev) => ({
+      ...prev,
+      firstName: fn,
+      lastName: rest.join(" "),
+      phone: user.phone ?? "",
+      emiratesId: user.emiratesId ?? "",
+      profileImage: user.profileImage ?? null,
+      backgroundImage: user.backgroundImage ?? null,
+      city: profile.city ?? profile.area ?? "",
+      currentLocationURL: profile.location?.currentLocationURL ?? "",
+      mapLocation: profile.location?.mapLocation ?? [{ lat: "", lng: "" }],
+    }));
+
+    const fetchProfile = async () => {
+      const supabase = getSupabase();
+      const role = user.role || "PARENT";
+      const table = role === "STUDENT" ? "StudentProfile" : "ParentProfile";
+      const { data: extra } = await supabase
+        .from(table)
+        .select("*")
+        .eq("userId", userId)
+        .single();
+
+      if (extra) {
+        setFormData((prev) => ({
+          ...prev,
+          city: extra.city ?? extra.area ?? prev.city,
+          currentLocationURL: extra.location?.currentLocationURL ?? prev.currentLocationURL,
+          mapLocation: extra.location?.mapLocation ?? prev.mapLocation,
+        }));
+      }
+    };
+    fetchProfile();
+  }, [user, userId]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const profileDetails = user?.studentProfile ?? user?.parentProfile ?? null;
-  const fullName = user?.fullName ?? "";
-  const [firstName = "", ...restName] = fullName.split(" ").filter(Boolean);
-  const lastName = restName.join(" ");
+  const handleLocationSelect = ({ lat, lng, mapUrl }) => {
+    setFormData((prev) => ({
+      ...prev,
+      currentLocationURL: mapUrl,
+      mapLocation: [{ lat, lng }],
+    }));
+    setIsMapModalOpen(false);
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    try {
+      await updateUserDetails({
+        userId,
+        data: {
+          fullName: `${formData.firstName} ${formData.lastName}`.trim(),
+          phone: formData.phone,
+          emiratesId: formData.emiratesId,
+        },
+      }).unwrap();
+
+      const supabase = getSupabase();
+
+      const { error: userImgError } = await supabase
+        .from("User")
+        .update({
+          profileImage: formData.profileImage,
+          backgroundImage: formData.backgroundImage,
+        })
+        .eq("id", userId);
+
+      if (userImgError) {
+        console.warn("User image update warning:", userImgError.message);
+      }
+
+      const role = user?.role || "PARENT";
+      const profileTable = role === "STUDENT" ? "StudentProfile" : "ParentProfile";
+      const profileIdField = "userId";
+
+      const { error: profileError } = await supabase
+        .from(profileTable)
+        .upsert({
+          [profileIdField]: userId,
+          city: formData.city,
+          area: formData.city,
+          location: {
+            currentLocationURL: formData.currentLocationURL,
+            mapLocation: formData.mapLocation,
+          },
+          updatedAt: new Date().toISOString(),
+        }, { onConflict: profileIdField });
+
+      if (profileError) {
+        console.warn("Profile table upsert warning:", profileError.message);
+      }
+
+      toast.success("Profile updated successfully");
+      refetch();
+    } catch (err) {
+      toast.error(err?.data?.message || "Failed to update profile");
+    }
+  };
 
   if (authLoading || !userId || !isLoggedIn) {
     return (
@@ -63,139 +178,115 @@ const ProfileDetails = () => {
     );
   }
 
-  // If user is a tutor, render TutorProfileDetails
   if (user?.role === "TUTOR") {
     return <TutorProfileDetails />;
   }
 
+  const inputClass = "w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primaryColor text-sm";
+  const labelClass = "block text-sm font-medium text-gray-600 mb-1";
+  const readOnlyClass = "text-blackColor dark:text-blackColor-dark";
+
   return (
-    <div className="p-10px md:px-10 md:py-50px mb-30px">
+    <form onSubmit={handleSave} className="p-10px md:px-10 md:py-50px mb-30px">
       <div className="mb-6 pb-5 border-b-2 border-borderColor dark:border-borderColor-dark flex justify-between items-center">
         <h2 className="text-2xl font-bold text-blackColor dark:text-blackColor-dark">
           My Profile
         </h2>
         <button
-          onClick={() => setIsEditFormOpen(true)}
-          className="px-4 py-2 bg-primaryColor text-white rounded hover:bg-primaryColor/90"
+          type="submit"
+          disabled={isSaving}
+          className="px-6 py-2 bg-primaryColor text-white rounded hover:bg-primaryColor/90 transition disabled:opacity-50 flex items-center gap-2"
         >
-          Edit Profile
+          {isSaving ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
+              Saving...
+            </>
+          ) : (
+            "Save Changes"
+          )}
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Personal Information Card */}
         <div className="bg-whiteColor dark:bg-whiteColor-dark shadow-accordion dark:shadow-accordion-dark rounded-5 p-6">
           <h3 className="text-xl font-semibold mb-4 text-blackColor dark:text-blackColor-dark">
             Personal Information
           </h3>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-gray-600">Registration Date</div>
-              <div>{moment(user?.createdAt).format("DD, MMMM yyyy H:MM A")}</div>
+            <div>
+              <label className={labelClass}>Registration Date</label>
+              <div className={readOnlyClass}>{moment(user?.createdAt).format("DD, MMMM yyyy H:MM A")}</div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-gray-600">First Name</div>
-              <div>{firstName || 'Not specified'}</div>
+            <div>
+              <label className={labelClass}>Email</label>
+              <div className={readOnlyClass}>{user?.email}</div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-gray-600">Last Name</div>
-              <div>{lastName || 'Not specified'}</div>
+            <div>
+              <label className={labelClass}>First Name</label>
+              <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className={inputClass} />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-gray-600">Email</div>
-              <div>{user?.email}</div>
+            <div>
+              <label className={labelClass}>Last Name</label>
+              <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className={inputClass} />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-gray-600">Phone</div>
-              <div>{user?.phone}</div>
+            <div>
+              <label className={labelClass}>Phone</label>
+              <input type="text" name="phone" value={formData.phone} onChange={handleChange} className={inputClass} />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-gray-600">User Type</div>
-              <div className="capitalize">{user?.role?.toLowerCase() || 'Not specified'}</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Education Details Card */}
-        <div className="bg-whiteColor dark:bg-whiteColor-dark shadow-accordion dark:shadow-accordion-dark rounded-5 p-6">
-          <h3 className="text-xl font-semibold mb-4 text-blackColor dark:text-blackColor-dark">
-            Education Details
-          </h3>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-gray-600">Curriculum</div>
-              <div>{profileDetails?.curriculum || 'Not specified'}</div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-gray-600">Subject</div>
-              <div>{profileDetails?.subject || 'Not specified'}</div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-gray-600">Grade</div>
-              <div>{profileDetails?.gradeLevel ? `Year ${profileDetails.gradeLevel}` : 'Not specified'}</div>
+            <div>
+              <label className={labelClass}>User Type</label>
+              <div className={readOnlyClass + " capitalize"}>{user?.role?.toLowerCase() || "Not specified"}</div>
             </div>
           </div>
         </div>
 
-        {/* Location Details Card */}
         <div className="bg-whiteColor dark:bg-whiteColor-dark shadow-accordion dark:shadow-accordion-dark rounded-5 p-6">
           <h3 className="text-xl font-semibold mb-4 text-blackColor dark:text-blackColor-dark">
             Location Details
           </h3>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-gray-600">City</div>
-              <div>{profileDetails?.city || profileDetails?.area || 'Not specified'}</div>
+            <div>
+              <label className={labelClass}>City</label>
+              <input type="text" name="city" value={formData.city} onChange={handleChange} className={inputClass} />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-gray-600">Location</div>
-              <div>
-                {profileDetails?.location?.currentLocationURL ? (
-                  <a 
-                    href={profileDetails.location.currentLocationURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primaryColor hover:underline"
-                  >
-                    View on Map
-                  </a>
-                ) : (
-                  'Not specified'
-                )}
-              </div>
+            <div>
+              <label className={labelClass}>Location</label>
+              <input type="text" value={formData.currentLocationURL} readOnly className={inputClass + " mb-2"} placeholder="Select location on map" />
+              <button type="button" onClick={() => setIsMapModalOpen(true)} className="w-full p-2 bg-primaryColor text-white rounded text-sm">
+                Select Location on Map
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Additional Information Card */}
         <div className="bg-whiteColor dark:bg-whiteColor-dark shadow-accordion dark:shadow-accordion-dark rounded-5 p-6">
           <h3 className="text-xl font-semibold mb-4 text-blackColor dark:text-blackColor-dark">
             Additional Information
           </h3>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-gray-600">Emirates ID</div>
-              <div>{profileDetails?.emirateId || 'Not specified'}</div>
+            <div>
+              <label className={labelClass}>Emirates ID</label>
+              <input type="text" name="emiratesId" value={formData.emiratesId} onChange={handleChange} className={inputClass} />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-gray-600">Registration Method</div>
-              <div className="capitalize">{user?.registrationMethod || 'Not specified'}</div>
+            <div>
+              <label className={labelClass}>Registration Method</label>
+              <div className={readOnlyClass + " capitalize"}>{user?.registrationMethod || "Not specified"}</div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-gray-600">Status</div>
-              <div className="capitalize">{user?.isActive ? 'active' : 'inactive'}</div>
+            <div>
+              <label className={labelClass}>Status</label>
+              <div className={readOnlyClass + " capitalize"}>{user?.isActive ? "Active" : "Inactive"}</div>
             </div>
           </div>
         </div>
       </div>
 
-      <EditProfileForm
-        isOpen={isEditFormOpen}
-        onClose={() => setIsEditFormOpen(false)}
-        userData={user}
-        onSuccess={handleEditSuccess}
+      <GoogleMapModal
+        isOpen={isMapModalOpen}
+        onClose={() => setIsMapModalOpen(false)}
+        onLocationSelect={handleLocationSelect}
       />
-    </div>
+    </form>
   );
 };
 

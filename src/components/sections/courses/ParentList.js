@@ -1,18 +1,69 @@
 "use client";
-import { useGetRequirementsListQuery } from "@/redux/services/userSlice";
-import CourseCard2 from "@/components/shared/courses/CourseCard2";
-import placeholder from "@/assets/images/coursePlaceholder.svg";
+import { useGetRequirementsListPublicQuery } from "@/redux/services/userSlice";
+import RequirementCard from "@/components/shared/cards/RequirementCard";
+import RequirementActions from "@/components/shared/requirements/RequirementActions";
+import Pagination from "@/components/shared/pagination/Pagination";
+import { useState, useEffect } from "react";
 
-const ParentList = () => {
-  const {
-    data: parents,
-    error,
-    isLoading,
-  } = useGetRequirementsListQuery("parent");
+const modeLabels = { ONLINE: "Online", HOME: "Home tuitions", INSTITUTE: "Institute" };
+
+const mapRequirement = (r) => ({
+  _id: r._id,
+  subject: r.subject,
+  curriculum: "",
+  grade: "",
+  location: { currentLocationURL: r.area || "" },
+  modeOfTeaching: modeLabels[r.tuitionType] || r.tuitionType || "Not specified",
+  expectedFeePerHour: null,
+  availability: [],
+  additionalNotes: r.additionalNotes,
+  status: r.status,
+  createdAt: r.createdAt,
+});
+
+const sortRequirements = (list, sortInput) => {
+  const sorted = [...list];
+  switch (sortInput) {
+    case "Title Ascending":
+      sorted.sort((a, b) => (a.subject || "").localeCompare(b.subject || ""));
+      break;
+    case "Title Descending":
+      sorted.sort((a, b) => (b.subject || "").localeCompare(a.subject || ""));
+      break;
+    case "Price Ascending":
+      break;
+    case "Price Descending":
+      break;
+    default:
+      sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }
+  return sorted;
+};
+
+const renderCards = (items) =>
+  items.map((item) => (
+    <div key={item._id} className="min-w-[320px] max-w-[320px] flex-shrink-0">
+      <div className="relative flex flex-col">
+        <RequirementCard requirement={mapRequirement(item)} />
+        <RequirementActions requirementId={item._id} />
+      </div>
+    </div>
+  ));
+
+const ITEMS_PER_PAGE = 9;
+
+const ParentList = ({ sortInput, variant }) => {
+  const { data: items, error, isLoading } = useGetRequirementsListPublicQuery();
+  const [isHovering, setIsHovering] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [sortInput]);
 
   if (isLoading) {
     return (
-      <div className="min-h-[400px] flex items-center justify-center">
+      <div className="min-h-[200px] flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primaryColor"></div>
       </div>
     );
@@ -20,16 +71,51 @@ const ParentList = () => {
 
   if (error) {
     return (
-      <div className="min-h-[400px] flex items-center justify-center text-red-500">
+      <div className="min-h-[200px] flex items-center justify-center text-red-500">
         Error loading requirements. Please try again later.
       </div>
     );
   }
 
-  if (!parents?.length) {
+  const sorted = sortRequirements(items || [], sortInput);
+  const totalPages = Math.ceil(sorted.length / ITEMS_PER_PAGE);
+  const paginated = sorted.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
+  if (!sorted.length) {
     return (
-      <div className="min-h-[400px] flex items-center justify-center text-contentColor dark:text-contentColor-dark">
+      <div className="min-h-[200px] flex items-center justify-center text-contentColor dark:text-contentColor-dark">
         No parent requirements found.
+      </div>
+    );
+  }
+
+  if (variant === "marquee") {
+    return (
+      <div
+        className="-mx-4 px-4 py-30px"
+        style={{
+          overflowX: "clip",
+          maskImage: "linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%)",
+        }}
+      >
+        <style>{`
+          @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+        `}</style>
+        <div
+          className="flex gap-30px w-max"
+          style={{
+            animation: "marquee 40s linear infinite",
+            animationPlayState: isHovering ? "paused" : "running",
+          }}
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
+        >
+          {renderCards([...sorted, ...sorted])}
+        </div>
       </div>
     );
   }
@@ -37,39 +123,15 @@ const ParentList = () => {
   return (
     <section className="py-30px lg:py-50px">
       <div className="container">
-        <div className="flex flex-col gap-30px">
-          {parents?.map((parent, idx) => (
-            <CourseCard2
-              key={parent._id}
-              course={{
-                id: parent._id,
-                title: `Need ${parent.subject} Tutor`,
-                firstName: parent?.userId?.firstName,
-                image: parent.profileImage || placeholder,
-                category: parent.requirement?.curriculum || "Not specified",
-                subject: parent?.subject || "Not specified",
-                level: parent.requirement?.grade || "Not specified",
-                description:
-                  parent.additionalNotes || "No description available",
-                location: parent.currentLocationURL || "Location not specified",
-                price: parent?.expectedFee || "Not specified",
-                rating: 0,
-                totalRating: 0,
-                userId: parent?.userId,
-                totalStudent: 0,
-                totalLesson: 0,
-                duration: "Not specified",
-                instructor: {
-                  name: `${parent.firstName} ${parent.lastName}`,
-                  image: parent.profileImage || "/images/placeholder.png",
-                },
-              }}
-              isList={true}
-              card={2}
-              isNotSidebar={true}
-            />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-30px">
+          {paginated.map((item) => (
+            <div key={item._id} className="relative flex flex-col">
+              <RequirementCard requirement={mapRequirement(item)} />
+              <RequirementActions requirementId={item._id} />
+            </div>
           ))}
         </div>
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
       </div>
     </section>
   );

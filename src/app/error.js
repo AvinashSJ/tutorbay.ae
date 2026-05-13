@@ -2,7 +2,7 @@
 import ErrorMain from "@/components/layout/main/ErrorMain";
 import React from "react";
 
-const erroError = () => {
+const ErrorPage = () => {
   return (
     <main>
       <ErrorMain />
@@ -10,4 +10,4 @@ const erroError = () => {
   );
 };
 
-export default Error;
+export default ErrorPage;

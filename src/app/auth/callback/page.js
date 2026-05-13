@@ -57,11 +57,10 @@ const AuthCallback = () => {
 
         toast.success("Successfully signed in!");
 
-        if (role === "TUTOR") {
-          router.push("/tutor-registration");
-        } else {
-          router.push("/parent-profile");
-        }
+        let target = "/parent-profile";
+        if (role === "TUTOR") target = "/tutor-registration";
+        else if (role === "STUDENT") target = "/student-profile";
+        window.location.href = target;
       } catch (err) {
         console.error("Auth callback error:", err);
         toast.error("Authentication failed. Please try again.");

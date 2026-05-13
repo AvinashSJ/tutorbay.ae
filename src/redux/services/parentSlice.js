@@ -40,6 +40,56 @@ export const parentSlice = createApi({
       invalidatesTags: ["Requirements"],
     }),
 
+    // Update a requirement
+    updateRequirement: builder.mutation({
+      async queryFn({ id, ...payload }) {
+        const supabase = getSupabase();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return { error: { status: 401, data: "Not authenticated" } };
+
+        const updates = {
+          title: payload.title ?? payload.subject,
+          subject: payload.subject,
+          area: payload.area ?? payload.city ?? "",
+          tuitionType: payload.modeOfTeaching === "online" ? "ONLINE" :
+                       payload.modeOfTeaching === "home"   ? "HOME"   : "INSTITUTE",
+          notes: payload.notes ?? null,
+          updatedAt: new Date().toISOString(),
+        };
+
+        const { data, error } = await supabase
+          .from("Requirement")
+          .update(updates)
+          .eq("id", id)
+          .eq("ownerId", user.id)
+          .select()
+          .single();
+
+        if (error) return { error: { status: 500, data: error.message } };
+        return { data };
+      },
+      invalidatesTags: ["Requirements"],
+    }),
+
+    // Delete a requirement
+    deleteRequirement: builder.mutation({
+      async queryFn(requirementId) {
+        const supabase = getSupabase();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return { error: { status: 401, data: "Not authenticated" } };
+
+        const { error } = await supabase
+          .from("Requirement")
+          .delete()
+          .eq("id", requirementId)
+          .eq("ownerId", user.id);
+
+        if (error) return { error: { status: 500, data: error.message } };
+        return { data: { success: true } };
+      },
+      invalidatesTags: ["Requirements"],
+    }),
+
     // Publish a requirement (calls Edge Function which also triggers matching)
     publishRequirement: builder.mutation({
       async queryFn(requirementId) {
@@ -72,6 +122,8 @@ export const parentSlice = createApi({
 
 export const {
   useCreateRequirementMutation,
+  useUpdateRequirementMutation,
+  useDeleteRequirementMutation,
   usePublishRequirementMutation,
   useGetUserPostsQuery,
 } = parentSlice;

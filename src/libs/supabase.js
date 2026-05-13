@@ -1,7 +1,3 @@
-// src/libs/supabase.js
-// Singleton Supabase browser client — import this everywhere in the frontend.
-// Uses NEXT_PUBLIC_ env vars so it is safe for client-side bundles.
-
 import { createBrowserClient } from "@supabase/ssr";
 
 let client;
@@ -11,10 +7,29 @@ export function getSupabase() {
     client = createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      {
+        auth: {
+          persistSession: true,
+          storageKey: 'tutorbay-auth',
+          storage: {
+            getItem: (key) => {
+              if (typeof window === "undefined") return null;
+              return localStorage.getItem(key);
+            },
+            setItem: (key, value) => {
+              if (typeof window === "undefined") return;
+              localStorage.setItem(key, value);
+            },
+            removeItem: (key) => {
+              if (typeof window === "undefined") return;
+              localStorage.removeItem(key);
+            },
+          },
+        },
+      }
     );
   }
   return client;
 }
 
-// Convenience default export
 export const supabase = typeof window !== "undefined" ? getSupabase() : null;

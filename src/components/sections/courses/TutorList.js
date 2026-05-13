@@ -11,7 +11,7 @@ import getAllCourses from "@/libs/getAllCourses";
 import Image from "next/image";
 import Link from "next/link";
 import NoData from "@/components/shared/others/NoData";
-import { useGetRequirementsListQuery } from "@/redux/services/userSlice";
+import { useGetRequirementsListPublicQuery } from "@/redux/services/userSlice";
 import RequirementCard from "@/components/shared/cards/RequirementCard";
 import TutorCard from "@/components/shared/cards/TutorCard";
 import placeholder from "@/assets/images/placeholder.png";
@@ -138,7 +138,7 @@ const TutorList = () => {
     data: tutors,
     error,
     isLoading,
-  } = useGetRequirementsListQuery("tutor");
+  } = useGetRequirementsListPublicQuery();
 
   if (isLoading) {
     return (

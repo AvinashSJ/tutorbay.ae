@@ -1,5 +1,7 @@
+"use client";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import registrationImage1 from "@/assets/images/register/register__1.png";
 import registrationImage2 from "@/assets/images/register/register__2.png";
 import registrationImage3 from "@/assets/images/register/register__3.png";
@@ -7,6 +9,20 @@ import PopupVideo from "@/components/shared/popup/PopupVideo";
 import ButtonPrimary from "@/components/shared/buttons/ButtonPrimary";
 
 const Registration = () => {
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (name.trim()) params.set("name", name.trim());
+    if (email.trim()) params.set("email", email.trim());
+    if (phone.trim()) params.set("phone", phone.trim());
+    router.push(`/login?${params.toString()}`);
+  };
+
   return (
     <section className="bg-register bg-cover bg-center bg-no-repeat lg:mb-150px">
       {/* registration overlay  */}
@@ -64,6 +80,7 @@ const Registration = () => {
             {/* sbject right  */}
             <div className="overflow-visible lg:col-start-8 lg:col-span-5 relative z-1 lg:-mb-150px">
               <form
+                onSubmit={handleSubmit}
                 className="p-35px pt-10 bg-lightGrey10 dark:bg-lightGrey10-dark rounded shadow-experience"
                 data-aos="fade-up"
               >
@@ -74,6 +91,8 @@ const Registration = () => {
                 <input
                   type="text"
                   placeholder="Your Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   className="w-full px-15px py-3 bg-lightGrey8 text-base mb-25px focus:outline-none"
                 />
 
@@ -81,27 +100,19 @@ const Registration = () => {
                   <input
                     type="email"
                     placeholder="Email Address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-15px py-3 bg-lightGrey8 text-base mb-25px focus:outline-none"
                   />
 
                   <input
                     type="text"
                     placeholder="Phone"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
                     className="w-full px-15px py-3 bg-lightGrey8 text-base mb-25px focus:outline-none"
                   />
                 </div>
-                <input
-                  type="text"
-                  placeholder="Address"
-                  className="w-full px-15px py-3 bg-lightGrey8 text-base mb-25px focus:outline-none"
-                />
-
-                <textarea
-                  placeholder="Comment"
-                  className="w-full px-15px pb-3 pt-5 bg-lightGrey8 text-base mb-25px h-[155px] placeholder:text-blackColor"
-                  cols="30"
-                  rows="10"
-                />
                 <div>
                   <ButtonPrimary type="submit" arrow={true}>
                     Sign Up

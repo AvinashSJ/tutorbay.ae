@@ -111,7 +111,7 @@ const CourseCard2 = ({ course, card, isList, isNotSidebar }) => {
             }`}
           >
             <Link
-              href={`courses/${id}`}
+              href={`/parent-requirements/${id}`}
               className="w-full overflow-hidden rounded"
             >
               <Image
@@ -177,7 +177,7 @@ const CourseCard2 = ({ course, card, isList, isNotSidebar }) => {
               </div>
               <h4>
                 <Link
-                  href={`courses/${id}`}
+                  href={`/parent-requirements/${id}`}
                   className={`${
                     card
                       ? "text-size-26 leading-30px "

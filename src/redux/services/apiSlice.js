@@ -1,8 +1,8 @@
 // services/apiSlice.js
 // Auth endpoints backed by Supabase Auth SDK directly.
-// We use createApi with a no-op base query since Supabase SDK handles transport.
 "use client";
 
+import { toast } from "react-hot-toast";
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getSupabase } from "@/libs/supabase";
 
@@ -23,19 +23,51 @@ export const apiSlice = createApi({
     }),
 
     registerUser: builder.mutation({
-      async queryFn({ email, password, fullName, phone, role = "PARENT" }) {
+      async queryFn({ email, password, fullName, phone, role = "PARENT", emiratesId }) {
         const supabase = getSupabase();
-        const { data, error } = await supabase.auth.signUp({
+        
+        console.log("registerUser params:", { email, fullName, phone, role, emiratesId });
+        
+        // Sign up in Supabase Auth
+        const { data: authData, error: authError } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            data: { fullName, phone, role },
+            data: { fullName, phone, role, emiratesId },
           },
         });
-        if (error) return { error: { status: 400, data: error.message } };
-        // If email confirmation is disabled, a session is returned immediately.
-        // If it's still enabled, data.session will be null — that's fine, user sees success toast.
-        return { data };
+        if (authError) return { error: { status: 400, data: authError.message } };
+        
+        console.log("Auth created, inserting User with emiratesId:", emiratesId);
+        
+        // Insert into User table
+        if (authData.user) {
+          const userData = {
+            id: authData.user.id,
+            email: email,
+            fullName: fullName,
+            phone: phone,
+            role: role,
+            emiratesId: emiratesId,
+            passwordHash: '', // Auth handles password, DB stores empty hash
+            isActive: true,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+          console.log("User insert data:", userData);
+          
+          const { error: insertError } = await supabase
+            .from("User")
+            .upsert(userData, { onConflict: 'id' });
+          if (insertError) {
+            console.error("Failed to upsert User record:", insertError);
+            toast.error("Failed to save profile: " + insertError.message);
+            return { error: { status: 500, data: insertError.message } };
+          }
+          console.log("User upserted successfully");
+        }
+        
+        return { data: authData };
       },
     }),
 

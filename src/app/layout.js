@@ -12,6 +12,7 @@ import FixedShadow from "@/components/shared/others/FixedShadow";
 import PreloaderPrimary from "@/components/shared/others/PreloaderPrimary";
 import ReduxProvider from "./ReduxProvider";
 import { Toaster } from "react-hot-toast";
+import PageViewTracker from "@/hooks/usePageView";
 
 export const inter = Inter({
   subsets: ["latin"],
@@ -38,6 +39,7 @@ export default function RootLayout({ children }) {
         className={`relative leading-[1.8] bg-bodyBg dark:bg-bodyBg-dark z-0  ${inter.className}`}
       >
         <PreloaderPrimary />
+        <PageViewTracker />
         <ReduxProvider>{children}</ReduxProvider>
 
         <Toaster position="top-center" reverseOrder={false} />
@@ -46,12 +48,29 @@ export default function RootLayout({ children }) {
           <FixedShadow />
           <FixedShadow align={"right"} />
         </div>
+        <script
+          src={`https://maps.googleapis.com/maps/api/js?key=AIzaSyDP0Bjh63ZIUEDaMe7c1QqxMHFK_ptsJwg&libraries=places`}
+          async
+          defer
+        ></script>
+        <script
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}
+          async
+        ></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}', {
+                send_page_view: true,
+                cookie_flags: 'SameSite=Lax;Secure',
+              });
+            `,
+          }}
+        ></script>
       </body>
-      <script
-        src={`https://maps.googleapis.com/maps/api/js?key=AIzaSyDP0Bjh63ZIUEDaMe7c1QqxMHFK_ptsJwg&libraries=places`}
-        async
-        defer
-      ></script>
     </html>
   );
 }

@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { validateLoginForm } from "@/libs/validations";
 import { getSupabase } from "@/libs/supabase";
+import { trackUserLogin } from "@/services/analytics";
 
 const LoginForm = () => {
   const [loginUser, { isLoading }] = useLoginUserMutation();
@@ -35,15 +36,15 @@ const LoginForm = () => {
       const result = await loginUser({ email: formData.email, password: formData.password }).unwrap();
       const user = result?.user;
       const role = user?.app_metadata?.role ?? user?.user_metadata?.role ?? "PARENT";
+      trackUserLogin("email", user.id);
       if (typeof window !== "undefined") {
         localStorage.setItem("user", JSON.stringify({ id: user.id, email: user.email, fullName: user.user_metadata?.fullName ?? "", role }));
       }
       toast.success("Login successful");
-      if (role === "TUTOR") {
-        router.push("/instructor-profile");
-      } else {
-        router.push("/parent-profile");
-      }
+      let target = "/parent-profile";
+      if (role === "TUTOR") target = "/tutor-registration";
+      else if (role === "STUDENT") target = "/student-profile";
+      window.location.href = target;
     } catch (err) {
       const msg = err?.data || "";
       if (msg.toLowerCase().includes("email not confirmed")) {
@@ -66,6 +67,7 @@ const LoginForm = () => {
         },
       });
       if (error) throw error;
+      trackUserLogin("google");
     } catch (err) {
       toast.error("Google sign-in failed. Please try again.");
       console.error("Google login error:", err);

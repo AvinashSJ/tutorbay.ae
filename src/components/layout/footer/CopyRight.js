@@ -10,7 +10,7 @@ const CopyRight = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-10 lg:mt-4 items-center border-t border-darkcolor">
           <div>
             <p className="text-base text-center sm:text-start text-darkgray">
-              © 2025 Powered by{" "}
+              © 2026 Powered by{" "}
               <a href="#" className="hover:text-primaryColor">
                 Tutorbay
               </a>{" "}
@@ -22,7 +22,7 @@ const CopyRight = () => {
             <ul className="flex items-center justify-center sm:justify-end">
               <li>
                 <a
-                  href="#"
+                  href="/terms"
                   className="text-base text-darkgray hover:text-primaryColor pr-4 border-r border-darkgray leading-1"
                 >
                   Terms of Use
@@ -30,7 +30,7 @@ const CopyRight = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/privacy"
                   className="text-base text-darkgray hover:text-primaryColor pl-4"
                 >
                   Privacy Policy
@@ -49,9 +49,27 @@ const CopyRight = () => {
 
           <div className="lg:col-start-4 lg:col-span-6">
             <p className="text-whiteColor">
-              Copyright © <span className="text-primaryColor">2025 </span> by
+              Copyright © <span className="text-primaryColor">2026 </span> by
               Tutorbay. All Rights Reserved.
             </p>
+            <ul className="flex items-center justify-center lg:justify-start mt-2">
+              <li>
+                <a
+                  href="/terms"
+                  className="text-sm text-whiteColor text-opacity-70 hover:text-primaryColor pr-4 border-r border-whiteColor border-opacity-30"
+                >
+                  Terms of Use
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/privacy"
+                  className="text-sm text-whiteColor text-opacity-70 hover:text-primaryColor pl-4"
+                >
+                  Privacy Policy
+                </a>
+              </li>
+            </ul>
           </div>
 
           <div className="lg:col-start-10 lg:col-span-3">

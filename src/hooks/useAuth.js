@@ -6,24 +6,53 @@ const useAuth = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Helper to extract role from user - prioritize user_metadata.role (set during Google signup)
+  // Helper to extract role from user - prioritize pending_role (set by SignUpForm during signup)
   const extractRole = (sessionUser) => {
-    // First check localStorage (set during Google signup flow)
+    // FIRST: Check pending_role (set by SignUpForm before redirect to registration)
+    if (typeof window !== "undefined") {
+      try {
+        const pendingRole = localStorage.getItem("pending_role");
+        if (pendingRole) {
+          console.log("[useAuth] Role from pending_role:", pendingRole);
+          localStorage.removeItem("pending_role");
+          // Also clear any stale user object
+          localStorage.removeItem("user");
+          return pendingRole;
+        }
+      } catch (e) {
+        // Ignore errors
+      }
+    }
+    
+    // SECOND: Check user_metadata (set during signup/callback)
+    const metaRole = sessionUser.user_metadata?.role;
+    if (metaRole) {
+      console.log("[useAuth] Role from user_metadata:", metaRole);
+      return metaRole;
+    }
+    
+    // THIRD: Check app_metadata
+    const appRole = sessionUser.app_metadata?.role;
+    if (appRole) {
+      console.log("[useAuth] Role from app_metadata:", appRole);
+      return appRole;
+    }
+    
+    // LAST: Check localStorage user (only if authenticated)
     if (typeof window !== "undefined") {
       try {
         const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
         if (storedUser?.role) {
+          console.log("[useAuth] Role from localStorage:", storedUser.role);
           return storedUser.role;
         }
       } catch (e) {
         // Ignore parse errors
       }
     }
-    // Then check user_metadata (updated by callback page)
-    const role = sessionUser.user_metadata?.role;
-    if (role) return role;
-    // Fallback to app_metadata
-    return sessionUser.app_metadata?.role ?? "PARENT";
+    
+    console.log("[useAuth] No role found, defaulting to PARENT");
+    return "PARENT";
   };
 
   useEffect(() => {

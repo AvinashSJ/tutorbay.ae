@@ -4,12 +4,14 @@ import HeadingPrimary from "@/components/shared/headings/HeadingPrimary";
 import SectionName from "@/components/shared/section-names/SectionName";
 import { useGetAllTutorsQuery } from "@/redux/services/userSlice";
 import placeholder from "@/assets/images/placeholder.png";
-import Image from "next/image";
+import { useState } from "react";
+import MatchScoreBadge from "@/components/shared/matching/MatchScoreBadge";
+import ButtonPrimary from "@/components/shared/buttons/ButtonPrimary";
 
-const TutorCard = ({ tutor }) => {
+const TutorCard = ({ tutor, matchScore }) => {
   const { tutorProfile, fullName, id: userId } = tutor;
-  const subjects = tutorProfile?.subjects || [];
-  const subjectsDisplay = Array.isArray(subjects) ? subjects.join(", ") : subjects;
+  const subjectsList = tutorProfile?.subjects || [];
+  const subjectsDisplay = Array.isArray(subjectsList) ? subjectsList.join(", ") : subjectsList;
   const availability = tutorProfile?.availability || [];
   const availabilityDisplay = Array.isArray(availability) && availability.length > 0
     ? availability.slice(0, 2).map(s => `${s.days}: ${s.startTime}-${s.endTime}`).join(", ")
@@ -19,14 +21,17 @@ const TutorCard = ({ tutor }) => {
   const modeOfTeaching = tutorProfile?.modeOfTeaching;
 
   return (
-    <div className="bg-whiteColor dark:bg-whiteColor-dark rounded-xl shadow-dropdown-secodary p-30px group hover:shadow-lg transition-all duration-300 hover:-translate-y-5px flex flex-col h-full">
+    <div className="bg-whiteColor dark:bg-whiteColor-dark rounded-xl shadow-dropdown-secodary p-30px group hover:shadow-lg transition-all duration-300 hover:-translate-y-5px flex flex-col h-full relative">
+      {matchScore !== undefined && (
+        <div className="absolute top-3 right-3">
+          <MatchScoreBadge score={matchScore} />
+        </div>
+      )}
       <div className="flex items-center gap-4 mb-4">
         <div className="w-16 h-16 rounded-full overflow-hidden bg-lightGrey7 flex-shrink-0">
-          <Image
-            src={tutor.profileImage || placeholder}
+          <img
+            src={tutor.profileImage || placeholder.src}
             alt={fullName || "Tutor"}
-            width={64}
-            height={64}
             className="w-full h-full object-cover"
           />
         </div>
@@ -49,7 +54,7 @@ const TutorCard = ({ tutor }) => {
           <div>
             <span className="text-xs font-semibold text-blackColor dark:text-blackColor-dark block mb-1">Subjects</span>
             <div className="flex flex-wrap gap-1.5">
-              {Array.isArray(subjects) ? subjects.map((s, i) => (
+              {Array.isArray(subjectsList) ? subjectsList.map((s, i) => (
                 <span key={i} className="text-xs bg-primaryColor bg-opacity-10 text-primaryColor px-2 py-0.5 rounded">{s}</span>
               )) : (
                 <span className="text-xs text-contentColor">{subjectsDisplay}</span>
@@ -58,24 +63,24 @@ const TutorCard = ({ tutor }) => {
           </div>
         )}
 
-        {expectedFeePerHour && (
-          <div className="flex justify-between items-center">
-            <span className="text-xs font-semibold text-blackColor dark:text-blackColor-dark">Fee</span>
-            <span className="text-lg font-bold text-primaryColor">AED {expectedFeePerHour}/hr</span>
+        {availabilityDisplay && (
+          <div>
+            <span className="text-xs font-semibold text-blackColor dark:text-blackColor-dark block mb-1">Availability</span>
+            <p className="text-xs text-contentColor dark:text-contentColor-dark">{availabilityDisplay}</p>
           </div>
         )}
 
-        {availabilityDisplay && (
-          <div className="flex justify-between items-center">
-            <span className="text-xs font-semibold text-blackColor dark:text-blackColor-dark">Availability</span>
-            <span className="text-xs text-contentColor text-right">{availabilityDisplay}</span>
+        {expectedFeePerHour && (
+          <div>
+            <span className="text-xs font-semibold text-blackColor dark:text-blackColor-dark block mb-1">Expected Fee</span>
+            <p className="text-sm font-semibold text-primaryColor">AED {expectedFeePerHour}/hr</p>
           </div>
         )}
       </div>
 
       <Link
-        href={`/tutors/${userId}`}
-        className="mt-4 block w-full text-center py-2.5 px-4 bg-primaryColor text-whiteColor rounded-lg hover:bg-opacity-90 transition-all duration-300 text-sm font-medium"
+        href={`/instructor-profile`}
+        className="mt-4 block w-full text-center py-2 px-4 bg-primaryColor text-whiteColor rounded-md hover:bg-opacity-90 transition-all duration-300"
       >
         View Profile
       </Link>
@@ -84,49 +89,73 @@ const TutorCard = ({ tutor }) => {
 };
 
 const CoursesFilter2 = () => {
-  const { data: tutors, error, isLoading } = useGetAllTutorsQuery();
+  const [isHovering, setIsHovering] = useState(false);
+
+  const { data: allTutors, isLoading, isError } = useGetAllTutorsQuery();
+
+  const displayTutors = allTutors?.map((t) => ({ tutor: t, matchScore: undefined })) || [];
 
   return (
-    <section>
-      <div className="pt-50px pb-10 md:pt-70px md:pb-50px lg:pt-20 2xl:pt-100px 2xl:pb-70px bg-lightGrey7 dark:bg-lightGrey7-dark">
-        <div className="container">
-          <div className="mb-5 md:mb-10" data-aos="fade-up">
-            <div className="text-center">
-              <SectionName>Find Tutors</SectionName>
-            </div>
-            <HeadingPrimary text="center">
-              Find Your Perfect{" "}
-              <span className="relative after:w-full after:h-[7px] z-0 after:bg-pink-400 after:absolute after:left-0 after:bottom-3 md:after:bottom-5 after:z-[-1]">
-                Tutor
-              </span>
-              <br />
-              For Your Needs
-            </HeadingPrimary>
+    <section className="py-30px lg:py-50px">
+      <div className="container">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between mb-8">
+          <div>
+            <SectionName>Our Tutors</SectionName>
+            <HeadingPrimary
+              text="Find Expert Tutors"
+            />
           </div>
+          <div className="mt-4 lg:mt-0">
+            <ButtonPrimary color="secondary" path="/tutors" arrow={true}>
+              All Tutors
+            </ButtonPrimary>
+          </div>
+        </div>
 
-          {isLoading ? (
-            <div className="min-h-[300px] flex items-center justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primaryColor"></div>
-            </div>
-          ) : error ? (
-            <div className="min-h-[300px] flex items-center justify-center text-red-500">
-              <p>Error loading tutors.</p>
-              <p className="text-sm mt-2 opacity-75">{error?.data || "Please try again later."}</p>
-            </div>
-          ) : !tutors?.length ? (
-            <div className="min-h-[300px] flex items-center justify-center text-contentColor dark:text-contentColor-dark">
-              No tutors found.
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-30px">
-              {tutors.map((tutor) => (
-                <div key={tutor.id} data-aos="fade-up">
-                  <TutorCard tutor={tutor} />
+        {isLoading ? (
+          <div className="min-h-[200px] flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primaryColor"></div>
+          </div>
+        ) : isError ? (
+          <div className="min-h-[200px] flex items-center justify-center text-red-500">
+            Unable to load tutors. Please try again later.
+          </div>
+        ) : displayTutors.length === 0 ? (
+          <div className="min-h-[200px] flex items-center justify-center text-contentColor dark:text-contentColor-dark">
+            No tutors available at the moment.
+          </div>
+        ) : (
+          <div
+            className="-mx-4 px-4 py-30px"
+            style={{
+              overflowX: "clip",
+              maskImage: "linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%)",
+            }}
+          >
+            <style>{`
+              @keyframes marquee {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(-50%); }
+              }
+            `}</style>
+            <div
+              className="flex gap-30px w-max"
+              style={{
+                animation: `marquee 40s linear infinite`,
+                animationPlayState: isHovering ? "paused" : "running",
+              }}
+              onMouseEnter={() => setIsHovering(true)}
+              onMouseLeave={() => setIsHovering(false)}
+            >
+              {[...displayTutors.slice(0, 10), ...displayTutors.slice(0, 10)].map(({ tutor, matchScore }, i) => (
+                <div key={`${tutor.id}-${i}`} className="min-w-[320px] max-w-[320px] flex-shrink-0">
+                  <TutorCard tutor={tutor} matchScore={matchScore} />
                 </div>
               ))}
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );

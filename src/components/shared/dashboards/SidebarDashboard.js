@@ -1,17 +1,26 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import ItemsDashboard from "./ItemsDashboard";
 import { useUser } from "@/hooks/useUser";
+import useAuth from "@/hooks/useAuth";
 
 const SidebarDashboard = () => {
-  const pathname = usePathname();
-  const pathParts = pathname.split("/").filter(Boolean);
-  const currentSection = pathParts[0] === "dashboards" ? pathParts[1] : pathParts[0];
-  const partOfPathNaem = currentSection?.split("-")[0] || "";
-  const isAdmin = partOfPathNaem === "admin" ? true : false;
-  const isInstructor = partOfPathNaem === "instructor" ? true : false;
+  const { user: authUser } = useAuth();
+  const authRole = authUser?.role || "PARENT";
+  const isAdmin = authRole === "ADMIN";
+  const isInstructor = authRole === "TUTOR";
   const { user } = useUser();
+  const SHOW_TEMPLATE_MENUS = false;
+
+  const filterItems = (sections) => {
+    if (SHOW_TEMPLATE_MENUS) return sections;
+    return sections
+      .map((section) => ({
+        ...section,
+        items: section.items.filter((item) => !item.templateOnly),
+      }))
+      .filter((section) => section.items.length > 0);
+  };
 
   const adminItems = [
     {
@@ -241,6 +250,74 @@ const SidebarDashboard = () => {
           ),
         },
         {
+          name: "Matches",
+          path: "/instructor-profile?section=matches",
+          icon: (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="feather feather-crosshair"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="22" y1="12" x2="18" y2="12"></line>
+              <line x1="6" y1="12" x2="2" y2="12"></line>
+              <line x1="12" y1="6" x2="12" y2="2"></line>
+              <line x1="12" y1="22" x2="12" y2="18"></line>
+            </svg>
+          ),
+        },
+        {
+          name: "Demos",
+          path: "/instructor-profile?section=sessions",
+          icon: (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="feather feather-calendar"
+            >
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          ),
+        },
+        {
+          name: "My Wallet",
+          path: "/instructor-profile?section=wallet",
+          icon: (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="feather feather-credit-card"
+            >
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+              <line x1="1" y1="10" x2="23" y2="10"></line>
+            </svg>
+          ),
+        },
+        {
           name: "Message",
           path: "/dashboards/instructor-message",
           tag: 12,
@@ -284,7 +361,7 @@ const SidebarDashboard = () => {
         },
         {
           name: "Reviews",
-          path: "/dashboards/instructor-reviews",
+          path: "/dashboards/tutor-reviews",
           icon: (
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -556,8 +633,8 @@ const SidebarDashboard = () => {
           ),
         },
         {
-          name: "Enrolled Courses",
-          path: "/dashboards/student-enrolled-courses",
+          name: "My Requirements",
+          path: "/dashboards/parent-requirements",
           icon: (
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -569,9 +646,14 @@ const SidebarDashboard = () => {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="feather feather-bookmark"
+              className="feather feather-list"
             >
-              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
             </svg>
           ),
         },
@@ -597,7 +679,7 @@ const SidebarDashboard = () => {
         },
         {
           name: "Reviews",
-          path: "/dashboards/student-reviews",
+          path: "/dashboards/parent-reviews",
           icon: (
             <svg
               xmlns="http://www.w3.org/2000/svg"

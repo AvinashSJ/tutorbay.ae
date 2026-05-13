@@ -1,0 +1,3 @@
+ALTER TABLE "User"
+ADD COLUMN IF NOT EXISTS "profileImage" TEXT,
+ADD COLUMN IF NOT EXISTS "backgroundImage" TEXT;

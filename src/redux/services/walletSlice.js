@@ -8,17 +8,19 @@ export const walletApi = createApi({
   baseQuery: fakeBaseQuery(),
   tagTypes: ['Wallet', 'Transactions'],
   endpoints: (builder) => ({
-    // Get wallet balance for a tutor
+    // Get wallet balance for the currently authenticated user
     getWalletBalance: builder.query({
-      async queryFn(userId) {
+      async queryFn() {
         const supabase = getSupabase();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return { error: { status: 401, data: "Not authenticated" } };
         const { data, error } = await supabase
           .from('TutorWallet')
           .select('id, balance, updatedAt')
-          .eq('tutorId', userId)
+          .eq('tutorId', user.id)
           .single();
-        if (error) return { error: { status: 404, data: error.message } };
-        return { data };
+        if (error) return { error: { status: 404, data: 0 } };
+        return { data: data || { balance: 0 } };
       },
       providesTags: ['Wallet'],
     }),
@@ -46,12 +48,64 @@ export const walletApi = createApi({
       providesTags: ['Transactions'],
     }),
 
-    // Unlock a requirement — deducts 1 credit and returns contact details
-    unlockRequirement: builder.mutation({
-      async queryFn(requirementId) {
+    // Get previously unlocked requirement IDs with parent contact info
+    getUnlockedRequirements: builder.query({
+      async queryFn() {
         const supabase = getSupabase();
-        const { data, error } = await supabase.functions.invoke('wallet-unlock', {
-          body: { requirementId },
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return { error: { status: 401, data: "Not authenticated" } };
+        const { data, error } = await supabase.rpc("get_unlocked_requirements", { p_tutor_id: user.id });
+        if (error) return { error: { status: 500, data: error.message } };
+        return { data: data || [] };
+      },
+      providesTags: ['Transactions'],
+    }),
+
+    // Unlock a requirement — deducts credits via RPC and returns parent contact
+    unlockRequirementContact: builder.mutation({
+      async queryFn({ requirementId }) {
+        const supabase = getSupabase();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return { error: { status: 401, data: "Not authenticated" } };
+
+        const { data, error } = await supabase.rpc("unlock_requirement_contact", {
+          p_requirement_id: requirementId,
+          p_tutor_id: user.id,
+        });
+        if (error) return { error: { status: 500, data: error.message } };
+        if (!data?.success) return { error: { status: 400, data: data?.error || "Unlock failed" } };
+        return { data };
+      },
+      invalidatesTags: ['Wallet', 'Transactions'],
+    }),
+
+    // Unlock a tutor's contact — deducts from parent, credits tutor
+    unlockTutorContact: builder.mutation({
+      async queryFn({ tutorId }) {
+        const supabase = getSupabase();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return { error: { status: 401, data: "Not authenticated" } };
+
+        const { data, error } = await supabase.rpc("unlock_tutor_contact", {
+          p_tutor_id: tutorId,
+          p_parent_id: user.id,
+        });
+        if (error) return { error: { status: 500, data: error.message } };
+        if (!data?.success) return { error: { status: 400, data: data?.error || "Unlock failed" } };
+        return { data };
+      },
+      invalidatesTags: ['Wallet', 'Transactions'],
+    }),
+
+    // Add free credits for testing (bypasses payment)
+    addFreeCredits: builder.mutation({
+      async queryFn({ amount }) {
+        const supabase = getSupabase();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return { error: { status: 401, data: "Not authenticated" } };
+        const { data, error } = await supabase.rpc("add_free_credits", {
+          p_user_id: user.id,
+          p_amount: amount,
         });
         if (error) return { error: { status: 500, data: error.message } };
         return { data };
@@ -64,7 +118,8 @@ export const walletApi = createApi({
       async queryFn(paymentData) {
         const supabase = getSupabase();
         const { data: { session } } = await supabase.auth.getSession();
-        const token = session?.access_token;
+        if (!session) return { error: { status: 401, data: "Not authenticated" } };
+        const token = session.access_token;
         const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/create-payment`, {
           method: 'POST',
           headers: {
@@ -86,6 +141,9 @@ export const walletApi = createApi({
 export const {
   useGetWalletBalanceQuery,
   useGetTransactionsQuery,
-  useUnlockRequirementMutation,
+  useGetUnlockedRequirementsQuery,
+  useUnlockRequirementContactMutation,
+  useUnlockTutorContactMutation,
+  useAddFreeCreditsMutation,
   useCreatePaymentMutation,
 } = walletApi;

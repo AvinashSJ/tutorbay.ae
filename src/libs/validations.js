@@ -142,11 +142,11 @@ export const validateSignupForm = (formData, userType) => {
     errors.confirmPassword = 'Passwords do not match';
   }
 
-  // Emirates ID validation (required for both tutor and parent)
-  if (!formData.emirateId) {
-    errors.emirateId = 'Emirates ID is required';
-  } else if (!isValidEmiratesId(formData.emirateId)) {
-    errors.emirateId = 'Emirates ID must be 15 digits (format: 784-XXXX-XXXXXXX-X)';
+  // Emirates ID validation
+  if (!formData.emiratesId) {
+    errors.emiratesId = 'Emirates ID is required';
+  } else if (!isValidEmiratesId(formData.emiratesId)) {
+    errors.emiratesId = 'Emirates ID must be 15 digits (starting with 784)';
   }
 
   return {

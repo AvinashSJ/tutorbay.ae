@@ -1,12 +1,21 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const ItemDashboard = ({ item }) => {
   const currentPath = usePathname();
+  const searchParams = useSearchParams();
 
   const { name, path, icon, tag } = item;
-  const isActive = currentPath === path ? true : false;
+
+  const [itemPath, itemQuery] = path.split("?");
+  const itemSection = itemQuery ? new URLSearchParams(itemQuery).get("section") : null;
+  const currentSection = searchParams.get("section");
+
+  const isActive = itemSection
+    ? currentPath === itemPath && currentSection === itemSection
+    : currentPath === path;
+
   return (
     <li
       className={`py-10px border-b border-borderColor dark:border-borderColor-dark ${
