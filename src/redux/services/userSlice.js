@@ -129,7 +129,7 @@ export const userSlice = createApi({
 
         if (existingProfile) {
           // Update existing profile and set status to pending review
-          const { firstName, lastName, phone, ...profileDataWithoutPersonal } = profileData;
+          const { phone, ...profileDataWithoutPersonal } = profileData;
           
           const locationData = profileDataWithoutPersonal.location ? {
             currentLocationURL: profileDataWithoutPersonal.location.currentLocationURL || '',
@@ -138,6 +138,8 @@ export const userSlice = createApi({
           
           const currentHistory = existingProfile.applicationHistory || [];
           const updateData = {
+            firstName: profileData.firstName,
+            lastName: profileData.lastName,
             nationality: profileDataWithoutPersonal.nationality,
             highestQualification: profileDataWithoutPersonal.highestQualification,
             modeOfTeaching: profileDataWithoutPersonal.modeOfTeaching,
@@ -168,7 +170,7 @@ export const userSlice = createApi({
           }
         } else {
           // Create new profile with pending review status
-          const { firstName, lastName, phone, ...profileDataWithoutPersonal } = profileData;
+          const { phone, ...profileDataWithoutPersonal } = profileData;
           
           // Flatten location object to match DB schema
           const locationData = profileDataWithoutPersonal.location ? {
@@ -178,6 +180,8 @@ export const userSlice = createApi({
           
           const insertData = {
             userId,
+            firstName: profileData.firstName,
+            lastName: profileData.lastName,
             nationality: profileDataWithoutPersonal.nationality,
             highestQualification: profileDataWithoutPersonal.highestQualification,
             modeOfTeaching: profileDataWithoutPersonal.modeOfTeaching,
@@ -257,7 +261,7 @@ export const userSlice = createApi({
         const supabase = getSupabase();
         const now = new Date().toISOString();
 
-        const { firstName, lastName, phone, ...profileDataWithoutPersonal } = profileData;
+        const { phone, ...profileDataWithoutPersonal } = profileData;
 
         const locationData = profileDataWithoutPersonal.location ? {
           currentLocationURL: profileDataWithoutPersonal.location.currentLocationURL || '',
@@ -266,6 +270,8 @@ export const userSlice = createApi({
 
         const upsertData = {
           userId,
+          firstName: profileData.firstName,
+          lastName: profileData.lastName,
           nationality: profileDataWithoutPersonal.nationality,
           highestQualification: profileDataWithoutPersonal.highestQualification,
           modeOfTeaching: profileDataWithoutPersonal.modeOfTeaching,
